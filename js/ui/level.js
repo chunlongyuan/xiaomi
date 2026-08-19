@@ -1,5 +1,5 @@
 // 通用关卡组件
-import { el, topbar, toast, burst, confetti, praise } from './common.js';
+import { el, topbar, toast, burst, confetti } from './common.js';
 import { makeMathLevel } from '../subjects/math.js';
 import { makeChineseLevel } from '../subjects/chinese.js';
 
@@ -132,10 +132,9 @@ export function renderLevel(ctx){
       audio.right();
       [...btn.parentNode.children].forEach(c=>c.disabled = true);
       results[idx] = 'right';
-      // 大特效
+      // 大特效（不再弹夸奖 toast，只保留 emoji burst + 撒花 + 音效）
       burst(pickCelebration());
       confetti(1000, 40);
-      toast(praise(), 900);
       // 数一数的题需要多留一会儿，方便孩子核对
       const wait = q.kind === 'count' ? 1400 : 900;
       setTimeout(()=>{ idx++; attempts = 0; render(); }, wait);
@@ -159,7 +158,7 @@ export function renderLevel(ctx){
           setTimeout(()=>{ idx++; attempts = 0; render(); }, 1500);
         }
       } else {
-        toast('再想想～', 900);
+        // 不再弹 "再想想" toast，红色抖动 + 错误音效已经是清晰反馈
         setTimeout(()=> btn.classList.remove('wrong'), 500);
       }
     }
