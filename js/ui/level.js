@@ -3,6 +3,7 @@ import { el, topbar, toast, burst, confetti } from './common.js';
 import { makeMathLevel } from '../subjects/math.js';
 import { makeChineseLevel } from '../subjects/chinese.js';
 import { makeEnglishLevel } from '../subjects/english.js';
+import { speechAvailable, listenOnce, matchSpoken } from '../speech.js';
 
 export function renderLevel(ctx){
   const { root, params, go, store, audio } = ctx;
@@ -85,6 +86,13 @@ export function renderLevel(ctx){
       hintBtn.addEventListener('click', ()=>{ audio.tap(); showHint(q); });
       tools.appendChild(hintBtn);
     }
+    // 英语题加"我来读"麦克风按钮
+    if(subject === 'english' && speechAvailable && (tier === 'words' || tier === 'phrases')){
+      const micBtn = el('button','iconbtn mic-btn','🎤');
+      micBtn.title = '按住我来读';
+      micBtn.addEventListener('click', ()=> tryPronunciation(micBtn, q));
+      tools.appendChild(micBtn);
+    }
     panel.appendChild(tools);
 
     // 选项
@@ -102,6 +110,48 @@ export function renderLevel(ctx){
     panel.appendChild(choices);
 
     setTimeout(()=> speakQuestion(q), 200);
+  }
+
+  async function tryPronunciation(btn, q){
+    if(btn.classList.contains('listening')) return;
+    audio.tap();
+    audio.stop();                       // 别让 TTS 干扰识别
+    btn.classList.add('listening');
+    btn.textContent = '👂';
+    // 目标就是答案本身（英语单词/短语）
+    const target = q.answer;
+    let alts = [];
+    try {
+      alts = await listenOnce({ lang:'en-US', timeout: 5000 });
+    } catch(e) {
+      showTip(`听不清呢～ (${e.message==='not-allowed'?'请允许麦克风':'再试一次'})`, 1500);
+    }
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+    if(!alts || !alts.length) return;
+    const heard = alts[0].transcript;
+    const ok = alts.some(a => matchSpoken(a.transcript, target));
+    if(ok){
+      // 直接判为答对
+      const correctBtn = [...document.querySelectorAll('.choice')].find(c =>
+        String(c.dataset.value).trim() === String(target).trim()
+      );
+      if(correctBtn) answer(correctBtn, target, q);
+      else {
+        // 后备：手动触发正确特效
+        audio.right(); burst('🎉'); confetti(1000, 40);
+        setTimeout(()=> { idx++; attempts=0; render(); }, 900);
+      }
+      showTip(`👍 你说的是 "${heard}"`, 1600);
+    } else {
+      showTip(`听到你说 "${heard}"，再试一次读 "${target}"`, 2000);
+    }
+  }
+  function showTip(text, ms){
+    const t = el('div','pron-tip', text);
+    document.body.appendChild(t);
+    setTimeout(()=> t.classList.add('show'), 10);
+    setTimeout(()=> { t.classList.remove('show'); setTimeout(()=>t.remove(), 300); }, ms);
   }
 
   function speakQuestion(q){
