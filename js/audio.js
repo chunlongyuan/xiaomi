@@ -118,7 +118,7 @@ function synth(text){
       const u = new SpeechSynthesisUtterance(String(text));
       u.lang = 'zh-CN';
       const v = pickVoice(); if(v) u.voice = v;
-      u.rate = 0.88; u.pitch = 1.0; u.volume = 1;
+      u.rate = 1.05; u.pitch = 1.0; u.volume = 1;
       u.onend = () => resolve();
       u.onerror = () => resolve();
       window.speechSynthesis.speak(u);
