@@ -1,0 +1,76 @@
+{
+  "_meta": "英语分级参考幼儿英语启蒙 CLIL 教学法：字母 → 单词 → 短语",
+  "tiers": [
+    { "id": "letters", "name": "ABC 字母", "sub": "3-5 岁 · 大小写认读",  "emoji": "🅰️", "color": "green"  },
+    { "id": "words",   "name": "常见单词", "sub": "4-6 岁 · 看图学词",    "emoji": "🐱", "color": "blue"   },
+    { "id": "phrases", "name": "日常短语", "sub": "5-7 岁 · 生活英语",    "emoji": "👋", "color": "orange" }
+  ],
+  "letters": [
+    {"upper":"A","lower":"a"},{"upper":"B","lower":"b"},{"upper":"C","lower":"c"},
+    {"upper":"D","lower":"d"},{"upper":"E","lower":"e"},{"upper":"F","lower":"f"},
+    {"upper":"G","lower":"g"},{"upper":"H","lower":"h"},{"upper":"I","lower":"i"},
+    {"upper":"J","lower":"j"},{"upper":"K","lower":"k"},{"upper":"L","lower":"l"},
+    {"upper":"M","lower":"m"},{"upper":"N","lower":"n"},{"upper":"O","lower":"o"},
+    {"upper":"P","lower":"p"},{"upper":"Q","lower":"q"},{"upper":"R","lower":"r"},
+    {"upper":"S","lower":"s"},{"upper":"T","lower":"t"},{"upper":"U","lower":"u"},
+    {"upper":"V","lower":"v"},{"upper":"W","lower":"w"},{"upper":"X","lower":"x"},
+    {"upper":"Y","lower":"y"},{"upper":"Z","lower":"z"}
+  ],
+  "words": [
+    {"text":"cat",    "cn":"猫",     "emoji":"🐱"},
+    {"text":"dog",    "cn":"狗",     "emoji":"🐶"},
+    {"text":"pig",    "cn":"猪",     "emoji":"🐷"},
+    {"text":"cow",    "cn":"牛",     "emoji":"🐄"},
+    {"text":"duck",   "cn":"鸭",     "emoji":"🦆"},
+    {"text":"fish",   "cn":"鱼",     "emoji":"🐟"},
+    {"text":"bird",   "cn":"鸟",     "emoji":"🐦"},
+    {"text":"bear",   "cn":"熊",     "emoji":"🐻"},
+    {"text":"lion",   "cn":"狮子",   "emoji":"🦁"},
+    {"text":"tiger",  "cn":"老虎",   "emoji":"🐯"},
+    {"text":"panda",  "cn":"熊猫",   "emoji":"🐼"},
+    {"text":"rabbit", "cn":"兔子",   "emoji":"🐰"},
+    {"text":"sheep",  "cn":"羊",     "emoji":"🐑"},
+    {"text":"monkey", "cn":"猴子",   "emoji":"🐵"},
+
+    {"text":"apple",  "cn":"苹果",   "emoji":"🍎"},
+    {"text":"banana", "cn":"香蕉",   "emoji":"🍌"},
+    {"text":"cake",   "cn":"蛋糕",   "emoji":"🎂"},
+    {"text":"milk",   "cn":"牛奶",   "emoji":"🥛"},
+    {"text":"egg",    "cn":"鸡蛋",   "emoji":"🥚"},
+    {"text":"pizza",  "cn":"披萨",   "emoji":"🍕"},
+
+    {"text":"red",    "cn":"红色",   "emoji":"🔴"},
+    {"text":"blue",   "cn":"蓝色",   "emoji":"🔵"},
+    {"text":"green",  "cn":"绿色",   "emoji":"🟢"},
+    {"text":"yellow", "cn":"黄色",   "emoji":"🟡"},
+    {"text":"black",  "cn":"黑色",   "emoji":"⚫"},
+
+    {"text":"one",    "cn":"一",     "emoji":"1️⃣"},
+    {"text":"two",    "cn":"二",     "emoji":"2️⃣"},
+    {"text":"three",  "cn":"三",     "emoji":"3️⃣"},
+    {"text":"four",   "cn":"四",     "emoji":"4️⃣"},
+    {"text":"five",   "cn":"五",     "emoji":"5️⃣"},
+
+    {"text":"sun",    "cn":"太阳",   "emoji":"☀️"},
+    {"text":"moon",   "cn":"月亮",   "emoji":"🌙"},
+    {"text":"star",   "cn":"星星",   "emoji":"⭐"},
+    {"text":"tree",   "cn":"树",     "emoji":"🌳"},
+    {"text":"flower", "cn":"花",     "emoji":"🌸"},
+    {"text":"car",    "cn":"汽车",   "emoji":"🚗"},
+    {"text":"book",   "cn":"书",     "emoji":"📖"},
+    {"text":"house",  "cn":"房子",   "emoji":"🏠"},
+    {"text":"ball",   "cn":"球",     "emoji":"⚽"}
+  ],
+  "phrases": [
+    {"text":"Hello",             "cn":"你好",           "emoji":"👋"},
+    {"text":"Goodbye",           "cn":"再见",           "emoji":"👋"},
+    {"text":"Thank you",         "cn":"谢谢你",         "emoji":"🙏"},
+    {"text":"Good morning",      "cn":"早上好",         "emoji":"🌅"},
+    {"text":"Good night",        "cn":"晚安",           "emoji":"🌃"},
+    {"text":"Happy birthday",    "cn":"生日快乐",       "emoji":"🎂"},
+    {"text":"I love you",        "cn":"我爱你",         "emoji":"❤️"},
+    {"text":"Yes",               "cn":"是的",           "emoji":"✅"},
+    {"text":"No",                "cn":"不是",           "emoji":"❌"},
+    {"text":"Sorry",             "cn":"对不起",         "emoji":"😢"}
+  ]
+}

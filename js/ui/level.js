@@ -2,6 +2,7 @@
 import { el, topbar, toast, burst, confetti } from './common.js';
 import { makeMathLevel } from '../subjects/math.js';
 import { makeChineseLevel } from '../subjects/chinese.js';
+import { makeEnglishLevel } from '../subjects/english.js';
 
 export function renderLevel(ctx){
   const { root, params, go, store, audio } = ctx;
@@ -9,9 +10,10 @@ export function renderLevel(ctx){
   const level = params.level || null;
   const tier = params.tier || 'basic';
 
-  const qs = subject === 'math'
-    ? makeMathLevel(5, level || 20)
-    : makeChineseLevel(5, tier);
+  const qs =
+    subject === 'math'    ? makeMathLevel(5, level || 20) :
+    subject === 'english' ? makeEnglishLevel(5, tier || 'letters') :
+                            makeChineseLevel(5, tier || 'sprout');
 
   let idx = 0;
   const results = [];
@@ -38,10 +40,12 @@ export function renderLevel(ctx){
     panel.appendChild(p);
 
     // 副标题
-    const tierName = { sprout:'🌱 启蒙', leaf:'🌿 认字入门', tree:'🌳 拓展识字', pine:'🌲 幼小衔接' }[tier] || '';
-    const subtitle = el('div','level-sub', subject==='math'
-      ? `🧮 ${level||'?'} 以内`
-      : `📚 ${tierName}`);
+    const zhTierName = { sprout:'🌱 启蒙', leaf:'🌿 认字入门', tree:'🌳 拓展识字', pine:'🌲 幼小衔接' }[tier];
+    const enTierName = { letters:'🅰️ 字母', words:'🐱 单词', phrases:'👋 短语' }[tier];
+    const subtitle = el('div','level-sub',
+      subject==='math'    ? `🧮 ${level||'?'} 以内` :
+      subject==='english' ? `🔤 ${enTierName||''}` :
+                            `📚 ${zhTierName||''}`);
     panel.appendChild(subtitle);
 
     if(idx >= qs.length){
@@ -102,9 +106,9 @@ export function renderLevel(ctx){
 
   function speakQuestion(q){
     if(q.speakParts && q.speakParts.length){
-      audio.speakParts(q.speakParts);
+      audio.speakParts(q.speakParts, { lang: q.lang });
     } else {
-      audio.speak(q.speak || q.prompt || '');
+      audio.speak(q.speak || q.prompt || '', { lang: q.lang });
     }
   }
 

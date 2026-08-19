@@ -33,6 +33,7 @@ export function renderHome(ctx){
   const grid = el('div', 'grid');
   grid.appendChild(subjectCard('math',     '数学乐园', '🧮', '5 档：3 岁到一年级'));
   grid.appendChild(subjectCard('chinese',  '语文乐园', '📚', '4 档：启蒙到一年级'));
+  grid.appendChild(subjectCard('english',  '英语乐园', '🔤', '3 档：ABC 到日常短语'));
   grid.appendChild(subjectCard('stickers', '贴纸收集', '🌟', `已收集 ${p.stickers.length} 枚`));
   grid.appendChild(subjectCard('stats',    '我的记录', '📊', `${p.levelsCompleted} 关 · 🔥${p.streak}`));
   root.appendChild(grid);
@@ -47,7 +48,7 @@ export function renderHome(ctx){
       audio.tap();
       if(id === 'stickers') go('stickers');
       else if(id === 'stats') go('stats');
-      else go('difficulty', { subject: id });   // 数学、语文都进分级页
+      else go('difficulty', { subject: id });   // 数学 / 语文 / 英语 都进分级页
     });
     return c;
   }

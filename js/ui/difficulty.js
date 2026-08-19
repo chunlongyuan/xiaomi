@@ -3,6 +3,7 @@
 import { el, topbar } from './common.js';
 import { store } from '../storage.js';
 import { chineseTiers } from '../subjects/chinese.js';
+import { englishTiers } from '../subjects/english.js';
 
 // 数学 5 档：从小班到一年级
 const MATH_TIERS = [
@@ -41,15 +42,21 @@ export function renderDifficulty(ctx){
       card.addEventListener('click', ()=>{ audio.tap(); go('level', { subject:'math', level:t.level }); });
       grid.appendChild(card);
     });
-  } else {
+  } else if(subject === 'chinese'){
     wrap.appendChild(el('div','reward-title','📚 选一个语文分级'));
     wrap.appendChild(el('div','tier-note','参考《3-6岁儿童学习与发展指南》+ 部编版一年级上册识字表'));
-    const s = store.stats?.chinese;
-    const tiers = chineseTiers();
+    renderTierCards(wrap, chineseTiers(), store.stats?.chinese, 'chinese');
+  } else if(subject === 'english'){
+    wrap.appendChild(el('div','reward-title','🔤 选一个英语分级'));
+    wrap.appendChild(el('div','tier-note','参考幼儿英语启蒙 CLIL 教学法：字母 → 单词 → 短语'));
+    renderTierCards(wrap, englishTiers(), store.stats?.english, 'english');
+  }
+
+  function renderTierCards(container, tiers, subjStats, subj){
     const grid = el('div','diff-grid');
-    wrap.appendChild(grid);
+    container.appendChild(grid);
     tiers.forEach(t => {
-      const st = s?.byTier?.[t.id] || {c:0,w:0};
+      const st = subjStats?.byTier?.[t.id] || {c:0,w:0};
       const total = st.c + st.w;
       const acc = total ? Math.round(st.c*100/total) : null;
       const card = el('button', `btn ${t.color} diff-btn`, `
@@ -58,7 +65,7 @@ export function renderDifficulty(ctx){
         <div class="ds">${t.sub}</div>
         <div class="da">${acc==null?'还没玩过':`已做 ${total} 题 · 正确率 ${acc}%`}</div>
       `);
-      card.addEventListener('click', ()=>{ audio.tap(); go('level', { subject:'chinese', tier:t.id }); });
+      card.addEventListener('click', ()=>{ audio.tap(); go('level', { subject:subj, tier:t.id }); });
       grid.appendChild(card);
     });
   }

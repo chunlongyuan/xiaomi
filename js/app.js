@@ -10,6 +10,7 @@ import { renderStats } from './ui/stats.js';
 import { store } from './storage.js';
 import { audio } from './audio.js';
 import { preloadChinese } from './subjects/chinese.js';
+import { preloadEnglish } from './subjects/english.js';
 
 const routes = {
   home:       ctx => renderHome(ctx),
@@ -53,4 +54,5 @@ bindUnlock();
 
 // Boot
 if(store.hasProfile) store.tickDailyStreak();
-preloadChinese().finally(() => go(store.hasProfile ? 'home' : 'profiles'));
+Promise.all([preloadChinese(), preloadEnglish()])
+  .finally(() => go(store.hasProfile ? 'home' : 'profiles'));

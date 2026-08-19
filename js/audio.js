@@ -80,45 +80,56 @@ function playFile(fname){
 
 /* ---------- SpeechSynthesis 回落 ---------- */
 
-const VOICE_RANK = [
+const ZH_VOICE_RANK = [
   /yu[-_ ]?shu/i, /瑜书/,
   /xiaoxiao/i, /晓晓/, /xiaoyi/i, /晓伊/, /yunxi/i, /云希/,
   /premium/i, /enhanced/i, /neural/i,
   /tingting/i, /ting[-_ ]?ting/i, /婷婷/,
   /sin[-_ ]?ji/i, /sinji/i,
 ];
-let voiceCache = null;
+const EN_VOICE_RANK = [
+  /jenny/i, /aria/i, /guy/i, /ryan/i,    // MS Neural
+  /samantha/i, /alex/i, /karen/i,        // Apple
+  /google.*us.*english/i, /google.*english/i,
+  /premium/i, /enhanced/i, /neural/i,
+];
+let zhCache = null, enCache = null;
+function rank(v, ranks){
+  const s = `${v.name} ${v.voiceURI||''}`;
+  for(let i=0;i<ranks.length;i++){ if(ranks[i].test(s)) return i; }
+  return 999;
+}
 function loadVoices(){
   try{
     const list = window.speechSynthesis.getVoices() || [];
-    const zh = list.filter(v => /zh|chinese|中文/i.test(v.lang) || /zh|chinese/i.test(v.name));
-    zh.sort((a,b) => voiceRank(a) - voiceRank(b));
-    voiceCache = zh;
-    return zh;
-  }catch{ return []; }
+    const zh = list.filter(v => /zh|chinese|中文/i.test(v.lang) || /zh|chinese|中文/i.test(v.name));
+    const en = list.filter(v => /^en/i.test(v.lang) || /english/i.test(v.name));
+    zh.sort((a,b) => rank(a, ZH_VOICE_RANK) - rank(b, ZH_VOICE_RANK) + (/zh[-_]CN/i.test(a.lang)?-50:0) - (/zh[-_]CN/i.test(b.lang)?-50:0));
+    en.sort((a,b) => rank(a, EN_VOICE_RANK) - rank(b, EN_VOICE_RANK) + (/en[-_]US/i.test(a.lang)?-50:0) - (/en[-_]US/i.test(b.lang)?-50:0));
+    zhCache = zh; enCache = en;
+  }catch{}
 }
-function voiceRank(v){
-  const s = `${v.name} ${v.voiceURI||''}`;
-  for(let i=0;i<VOICE_RANK.length;i++){ if(VOICE_RANK[i].test(s)) return i; }
-  if(/zh[-_]CN/i.test(v.lang)) return 100;
-  if(/zh/i.test(v.lang)) return 200;
-  return 999;
+function pickVoice(lang){
+  if(!zhCache) loadVoices();
+  if(lang && /^en/i.test(lang)) return (enCache || [])[0] || null;
+  return (zhCache || [])[0] || null;
 }
-function pickVoice(){ return (voiceCache || loadVoices())[0] || null; }
 if('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged = () => { voiceCache = null; loadVoices(); };
+  window.speechSynthesis.onvoiceschanged = () => { zhCache = enCache = null; loadVoices(); };
   loadVoices();
 }
 
-function synth(text){
+function synth(text, lang){
   return new Promise(resolve => {
     if(!('speechSynthesis' in window)){ resolve(); return; }
     try{
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(String(text));
-      u.lang = 'zh-CN';
-      const v = pickVoice(); if(v) u.voice = v;
-      u.rate = 1.05; u.pitch = 1.0; u.volume = 1;
+      u.lang = lang || 'zh-CN';
+      const v = pickVoice(u.lang); if(v) u.voice = v;
+      // 英语稍慢一些让小朋友听清
+      u.rate = /^en/i.test(u.lang) ? 0.92 : 1.05;
+      u.pitch = 1.0; u.volume = 1;
       u.onend = () => resolve();
       u.onerror = () => resolve();
       window.speechSynthesis.speak(u);
@@ -134,7 +145,7 @@ function cancelAllSpeech(){
   clipCache.forEach(a => { try{ a.pause(); }catch{} });
 }
 
-async function speak(text){
+async function speak(text, opts = {}){
   if(!store.soundOn) return;
   cancelAllSpeech();
   const id = ++currentSpeakId;
@@ -142,11 +153,11 @@ async function speak(text){
   if(id !== currentSpeakId) return;
   const f = getAudioFor(text);
   if(f) return playFile(f);
-  return synth(text);
+  return synth(text, opts.lang);
 }
 
 // 按 part 顺播（数学题："5", "加", "3", "等于几"）
-async function speakParts(parts){
+async function speakParts(parts, opts = {}){
   if(!store.soundOn) return;
   cancelAllSpeech();
   const id = ++currentSpeakId;
@@ -157,7 +168,7 @@ async function speakParts(parts){
     const key = String(p).trim();
     const f = getAudioFor(key);
     if(f){ await playFile(f); }
-    else { await synth(key); }
+    else { await synth(key, opts.lang); }
   }
 }
 
@@ -211,5 +222,5 @@ export const audio = {
   },
   // 调试用
   hasClipFor(text){ return !!getAudioFor(text); },
-  currentVoiceName(){ return pickVoice()?.name || ''; },
+  currentVoiceName(lang){ return pickVoice(lang)?.name || ''; },
 };

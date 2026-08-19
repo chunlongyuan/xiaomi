@@ -21,6 +21,7 @@ function newProfile(name, avatar){
     stats: {
       math:    { correct:0, wrong:0, byLevel:{ 5:{c:0,w:0}, 10:{c:0,w:0}, 20:{c:0,w:0}, 50:{c:0,w:0}, 100:{c:0,w:0} } },
       chinese: { correct:0, wrong:0, byTier:{ sprout:{c:0,w:0}, leaf:{c:0,w:0}, tree:{c:0,w:0}, pine:{c:0,w:0} } },
+      english: { correct:0, wrong:0, byTier:{ letters:{c:0,w:0}, words:{c:0,w:0}, phrases:{c:0,w:0} } },
     },
     sessions: [],
   };
@@ -103,7 +104,7 @@ export const store = {
         s.byLevel[level].c += correct;
         s.byLevel[level].w += (total - correct);
       }
-      if(subject==='chinese' && level && s.byTier){
+      if((subject==='chinese' || subject==='english') && level && s.byTier){
         if(!s.byTier[level]) s.byTier[level] = {c:0,w:0};
         s.byTier[level].c += correct;
         s.byTier[level].w += (total - correct);
