@@ -75,10 +75,12 @@ export function renderProfiles(ctx){
     });
     form.querySelector('[data-act="add"]').addEventListener('click', ()=>{
       const name = form.querySelector('.txt').value.trim() || '小朋友';
-      audio.tap();
+      audio.unlock();
+      audio.fanfare();
+      audio.speak(`你好，${name}！我们开始玩吧！`);
       const p = store.createProfile(name, picked);
       store.tickDailyStreak();
-      go('home');
+      setTimeout(()=> go('home'), 400);
     });
   }
 }

@@ -126,7 +126,9 @@ export function renderLevel(ctx){
       burst(pickCelebration());
       confetti(1000, 40);
       toast(praise(), 900);
-      setTimeout(()=>{ idx++; attempts = 0; render(); }, 900);
+      // 数一数的题需要多留一会儿，方便孩子核对
+      const wait = q.kind === 'count' ? 1400 : 900;
+      setTimeout(()=>{ idx++; attempts = 0; render(); }, wait);
     } else {
       btn.classList.add('wrong');
       audio.wrong();

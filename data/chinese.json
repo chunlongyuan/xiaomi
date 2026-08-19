@@ -29,7 +29,7 @@
     { "char":"船", "pinyin":"chuán","emoji":"⛵" },
     { "char":"门", "pinyin":"mén", "emoji":"🚪" },
     { "char":"家", "pinyin":"jiā", "emoji":"🏠" },
-    { "char":"天", "pinyin":"tiān","emoji":"🌈" },
+    { "char":"天", "pinyin":"tiān","emoji":"⛅" },
     { "char":"地", "pinyin":"dì",  "emoji":"🌍" }
   ],
   "shengmu": ["b","p","m","f","d","t","n","l","g","k","h","j","q","x","zh","ch","sh","r","z","c","s","y","w"],
