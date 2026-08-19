@@ -1,5 +1,6 @@
 // 接水果 —— 篮子跟着手指移动，接住 5 个水果
 import { el, rand } from '../ui/common.js';
+import { flashPenalty } from './_penalty.js';
 
 const FRUITS = ['🍎','🍌','🍓','🍇','🍉','🍑','🍊','🥝','🍐','🥭'];
 const GOAL = 5;
@@ -7,6 +8,7 @@ const GOAL = 5;
 export function playCatch(ctx, onDone){
   const { root, audio } = ctx;
   let caught = 0;
+  let missStreak = 0;
   let stopped = false;
   let basketX = 50;   // 篮子中心 x（%）
 
@@ -57,7 +59,23 @@ export function playCatch(ctx, onDone){
     arena.appendChild(f);
     setTimeout(() => {
       if(stopped) return;
-      if(Math.abs(startX - basketX) < 10){
+      const hit = Math.abs(startX - basketX) < 10;
+      if(!hit){
+        missStreak += 1;
+        if(missStreak >= 2){
+          missStreak = 0;
+          if(caught > 0){
+            caught -= 1;
+            audio.wrong();
+            panel.querySelector('.hit').textContent = String(caught);
+            renderProgress();
+            flashPenalty(panel, '-1');
+          }
+        }
+      } else {
+        missStreak = 0;
+      }
+      if(hit){
         if(isStar){
           caught += 2;
           audio.fanfare();

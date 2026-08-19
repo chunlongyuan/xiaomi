@@ -7,6 +7,7 @@
 // - 3 次难度可选：容易(3只) / 一般(5只) / 挑战(8只)
 
 import { el, rand } from '../ui/common.js';
+import { flashPenalty } from './_penalty.js';
 
 const MOLES = ['🦁','🐼','🐰','🦄','🐸','🐵','🐨','🐯','🐧','🦊','🐶','🐱','🐔','🐮'];
 const CHEERS = ['打中啦！','太棒了！','厉害！','真准！','好眼力！'];
@@ -95,10 +96,16 @@ export function playWhack(ctx, onDone){
   function hit(i){
     if(stopped) return;
     if(i !== currentIdx || !holes[i].classList.contains('up')){
-      // 未命中：小提示、不扣分
+      // 敲错洞：扣 1 分（不减到负）
       holes[i].classList.add('miss');
       setTimeout(()=> holes[i].classList.remove('miss'), 240);
-      audio.tap();
+      audio.wrong();
+      if(hits > 0){
+        hits -= 1;
+        panel.querySelector('.hit').textContent = String(hits);
+        renderProgress();
+        flashPenalty(panel, '-1');
+      }
       return;
     }
     // 命中！

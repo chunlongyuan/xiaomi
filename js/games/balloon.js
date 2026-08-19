@@ -1,5 +1,6 @@
 // 戳气球 —— 各色气球从底部飘上来，戳够 5 个胜利
 import { el, rand } from '../ui/common.js';
+import { flashPenalty } from './_penalty.js';
 
 const COLORS = ['🎈','🎈','🎈','🩷','💛','💚','💙','💜'];
 const GOAL = 5;
@@ -7,6 +8,7 @@ const GOAL = 5;
 export function playBalloon(ctx, onDone){
   const { root, audio } = ctx;
   let hits = 0;
+  let missStreak = 0;
   let stopped = false;
   const spawned = [];
 
@@ -44,8 +46,24 @@ export function playBalloon(ctx, onDone){
     b.style.setProperty('--sway', ((Math.random()*40 - 20) | 0) + 'px');
     arena.appendChild(b);
     spawned.push(b);
-    b.addEventListener('animationend', () => b.remove(), { once:true });
-    b.addEventListener('click', () => pop(b, isStar));
+    b.addEventListener('animationend', () => {
+      // 气球飘走没戳中，连续错过 2 个扣 1 分
+      if(!b.classList.contains('popped') && !stopped){
+        missStreak += 1;
+        if(missStreak >= 2){
+          missStreak = 0;
+          if(hits > 0){
+            hits -= 1;
+            audio.wrong();
+            panel.querySelector('.hit').textContent = String(hits);
+            renderProgress();
+            flashPenalty(panel, '-1');
+          }
+        }
+      }
+      b.remove();
+    }, { once:true });
+    b.addEventListener('click', () => { missStreak = 0; pop(b, isStar); });
 
     const nextIn = 700 - Math.min(hits*60, 400) + Math.random()*400;
     setTimeout(spawn, nextIn);

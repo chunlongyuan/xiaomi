@@ -435,8 +435,18 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   .wh-progress{font-size:24px}
 }
 
+/* ===== Penalty flash ===== */
+.penalty-flash{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);
+  font-size:96px;font-weight:900;color:#e5548a;
+  text-shadow:0 3px 0 #fff, 0 8px 18px rgba(0,0,0,.3);
+  opacity:0;pointer-events:none;z-index:200;
+  transition:opacity .18s, transform .3s cubic-bezier(.4,1.6,.4,1);
+}
+.penalty-flash.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
 /* ===== Balloon Pop ===== */
-.balloon{background:linear-gradient(180deg,#e6f5ff,#c6e6ff);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow)}
+.balloon{background:linear-gradient(180deg,#e6f5ff,#c6e6ff);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow);position:relative}
 .balloon-arena{
   position:relative;height:420px;overflow:hidden;
   border-radius:20px;
@@ -527,7 +537,7 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 @media (max-width:480px){ .spot-cell{font-size:42px} }
 
 /* ===== Catch fruit ===== */
-.catch{background:linear-gradient(180deg,#fff2c9,#ffdb7a);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow)}
+.catch{background:linear-gradient(180deg,#fff2c9,#ffdb7a);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow);position:relative}
 .catch-arena{
   position:relative;height:420px;overflow:hidden;
   border-radius:20px;
@@ -569,7 +579,7 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 .riddle .choices{margin-top:14px}
 .riddle .choice{min-height:110px;font-size:56px}
 
-.memory{background:linear-gradient(180deg,#e6f5ff,#c6e6ff);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.memory{background:linear-gradient(180deg,#e6f5ff,#c6e6ff);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);position:relative}
 .mem-grid{display:grid;gap:10px;margin:0 auto;grid-template-columns:repeat(4,minmax(0,1fr));max-width:520px}
 .mem-card{
   aspect-ratio:1;border-radius:18px;border:none;cursor:pointer;
