@@ -185,13 +185,21 @@ export const audio = {
   speak,
   speakParts,
   stop: cancelAllSpeech,
-  tap(){ beep({freq:520, dur:.06, type:'triangle', gain:.06}); },
+  tap(){ beep({freq:520, dur:.06, type:'triangle', gain:.07}); },
+  // 答对：欢快上行三连音 + 泛音，声音更饱满
   right(){
-    beep({freq:660, dur:.12, type:'triangle', gain:.15});
-    beep({freq:990, dur:.16, type:'triangle', gain:.15, when:.1});
-    beep({freq:1320,dur:.22, type:'triangle', gain:.15, when:.22});
+    beep({freq:660, dur:.16, type:'triangle', gain:.22});
+    beep({freq:990, dur:.18, type:'triangle', gain:.22, when:.11});
+    beep({freq:1320,dur:.26, type:'triangle', gain:.22, when:.24});
+    // 叠一层方波泛音让"叮"更亮
+    beep({freq:1320,dur:.10, type:'square',   gain:.06, when:.24});
+    beep({freq:1980,dur:.10, type:'triangle', gain:.10, when:.30});
   },
-  wrong(){ beep({freq:300, dur:.18, type:'sawtooth', gain:.08, slideTo:180}); },
+  // 答错：低沉双下降"duh-duh"，比原来更明显
+  wrong(){
+    beep({freq:440, dur:.18, type:'square',   gain:.18, slideTo:280});
+    beep({freq:280, dur:.22, type:'sawtooth', gain:.15, slideTo:160, when:.16});
+  },
   fanfare(){
     const notes = [523, 659, 784, 1046, 1319];
     notes.forEach((f,i)=> beep({freq:f, dur:.2, type:'triangle', gain:.15, when:i*.12}));
