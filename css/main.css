@@ -353,12 +353,12 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 .whack-hole:active{transform:translateY(2px)}
 .whack-hole .mole{
   position:absolute;left:0;right:0;bottom:-110%;
-  font-size:56px;line-height:1;text-align:center;
+  font-size:88px;line-height:1;text-align:center;
   transition:bottom .22s cubic-bezier(.5,1.7,.5,1);
-  filter:drop-shadow(0 4px 6px rgba(0,0,0,.5));
+  filter:drop-shadow(0 6px 8px rgba(0,0,0,.55));
   pointer-events:none;
 }
-.whack-hole.up .mole{bottom:18%}
+.whack-hole.up .mole{bottom:14%}
 .whack-hole.bonk .mole{
   animation:squish .35s ease-out forwards;
 }
@@ -387,7 +387,7 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   100%{ opacity:0; transform:translate(-50%, -70px) scale(1); }
 }
 @media (max-width: 480px){
-  .whack-hole .mole{font-size:48px}
+  .whack-hole .mole{font-size:72px}
   .wh-progress{font-size:24px}
 }
 
