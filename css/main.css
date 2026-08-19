@@ -1,0 +1,310 @@
+/* 小米学习乐园 — 3D Q 版糖果色主题 */
+:root{
+  --bg-1:#ffe9b0; --bg-2:#ffb3d1; --bg-3:#a0e7ff;
+  --ink:#3a2c1f; --ink-soft:#6b5744;
+  --card:#fffdf7;
+  --pink:#ff7aa7; --pink-d:#e5548a;
+  --yellow:#ffd35a; --yellow-d:#e8b634;
+  --blue:#6dc9ff; --blue-d:#3ca4e8;
+  --green:#7fd88a; --green-d:#4fbf60;
+  --violet:#b18cff; --violet-d:#8a63e8;
+  --orange:#ff9a55; --orange-d:#e57a2e;
+  --shadow: 0 10px 0 rgba(0,0,0,.12), 0 22px 40px -12px rgba(0,0,0,.28);
+  --shadow-sm: 0 4px 0 rgba(0,0,0,.12), 0 10px 18px -6px rgba(0,0,0,.22);
+  --radius: 28px;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;font-family:"PingFang SC","HarmonyOS Sans SC","Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);overflow-x:hidden}
+body{
+  background:
+    radial-gradient(1200px 800px at 10% -10%, var(--bg-1) 0%, transparent 60%),
+    radial-gradient(1200px 800px at 110% 10%, var(--bg-2) 0%, transparent 55%),
+    radial-gradient(1200px 900px at 50% 120%, var(--bg-3) 0%, transparent 55%),
+    linear-gradient(160deg,#fff7dd,#e8f8ff);
+  min-height:100dvh;
+  user-select:none;
+}
+
+/* Floating clouds decoration */
+body::before, body::after{
+  content:"☁️";
+  position:fixed; font-size:64px; opacity:.55; pointer-events:none;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.08));
+  animation: drift 24s linear infinite;
+}
+body::before{top:10%; left:-80px}
+body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:reverse}
+@keyframes drift{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(120vw)}
+}
+
+.app{
+  max-width:960px; margin:0 auto; padding:20px 18px 40px;
+  min-height:100dvh;
+  position:relative; z-index:1;
+}
+
+/* ===== Big buttons ===== */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:.5em;
+  min-height:72px; padding:14px 28px;
+  border-radius:999px; border:none;
+  font-size:22px; font-weight:800; letter-spacing:.02em;
+  color:#fff; background:linear-gradient(180deg,var(--pink),var(--pink-d));
+  box-shadow:var(--shadow-sm);
+  cursor:pointer; transform-origin:center;
+  transition: transform .08s, box-shadow .08s, filter .15s;
+}
+.btn:active{ transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.14) }
+.btn.yellow{background:linear-gradient(180deg,var(--yellow),var(--yellow-d));color:#5a3d00}
+.btn.blue{background:linear-gradient(180deg,var(--blue),var(--blue-d))}
+.btn.green{background:linear-gradient(180deg,var(--green),var(--green-d))}
+.btn.violet{background:linear-gradient(180deg,var(--violet),var(--violet-d))}
+.btn.orange{background:linear-gradient(180deg,var(--orange),var(--orange-d))}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm)}
+.btn:disabled{filter:grayscale(.5) opacity(.6);cursor:not-allowed}
+
+/* ===== Top bar ===== */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 6px 22px;
+}
+.brand{
+  display:flex;align-items:center;gap:12px;font-weight:900;font-size:26px;
+  text-shadow:0 3px 0 #fff, 0 6px 12px rgba(0,0,0,.08);
+}
+.brand .logo{font-size:44px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.15))}
+.stars-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--card);
+  border-radius:999px;padding:8px 16px 8px 10px;
+  font-weight:900;font-size:20px;color:#7a5b00;
+  box-shadow:var(--shadow-sm);
+}
+.stars-pill .s{font-size:26px;filter:drop-shadow(0 3px 4px rgba(255,180,0,.6))}
+.streak-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(180deg,#fff,#ffe9c7);
+  border-radius:999px;padding:6px 14px;font-weight:800;color:#a5490b;
+  box-shadow:var(--shadow-sm);margin-left:8px;font-size:16px;
+}
+
+/* ===== Home cards ===== */
+.hero{
+  text-align:center;padding:8px 0 16px;
+}
+.hero h1{font-size:44px;margin:8px 0 4px;letter-spacing:.04em;
+  text-shadow:0 4px 0 #fff, 0 10px 18px rgba(0,0,0,.12);}
+.hero .sub{color:var(--ink-soft);font-weight:700;font-size:18px}
+
+.grid{
+  display:grid;gap:18px;margin-top:22px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+}
+.card{
+  background:var(--card);border-radius:var(--radius);
+  padding:22px 20px 20px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .15s;
+}
+.card:hover{transform:translateY(-4px)}
+.card:active{transform:translateY(2px)}
+.card .emoji{font-size:84px;line-height:1;filter:drop-shadow(0 10px 12px rgba(0,0,0,.18))}
+.card h3{margin:2px 0 0;font-size:26px}
+.card p{margin:0;color:var(--ink-soft);font-weight:600}
+.card.math{background:linear-gradient(180deg,#fff7d6,#ffe8a3)}
+.card.chinese{background:linear-gradient(180deg,#ffd6e6,#ffb0cf)}
+.card.stickers{background:linear-gradient(180deg,#d9f1ff,#a9defc)}
+
+/* ===== Level page ===== */
+.level{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px 20px;margin-top:8px;
+}
+.progress{
+  display:flex;gap:8px;justify-content:center;margin-bottom:14px;
+}
+.progress .dot{
+  width:22px;height:22px;border-radius:50%;
+  background:#eee;box-shadow:inset 0 -3px 0 rgba(0,0,0,.08);
+}
+.progress .dot.done{background:linear-gradient(180deg,#ffe17a,#f7b500)}
+.progress .dot.wrong{background:linear-gradient(180deg,#ffc4c4,#ff7676)}
+.progress .dot.current{background:linear-gradient(180deg,#a0e7ff,#4fb8e7);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(1.2)}}
+
+.question{
+  text-align:center;padding:6px 0 16px;
+  font-size:64px;font-weight:900;color:var(--ink);
+  text-shadow:0 4px 0 #fff, 0 10px 18px rgba(0,0,0,.1);
+  min-height:120px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:14px;
+}
+.question .op{color:var(--pink-d)}
+.question .qmark{color:var(--blue-d);animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.3}}
+.question .hanzi{font-size:120px;line-height:1}
+.question .pinyin{font-size:32px;color:var(--ink-soft);width:100%}
+.question .prompt{font-size:26px;color:var(--ink-soft);font-weight:700;width:100%}
+
+.choices{
+  display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  margin-top:12px;
+}
+.choice{
+  min-height:110px;border-radius:24px;border:none;
+  background:linear-gradient(180deg,#fff,#f3f6ff);
+  box-shadow:var(--shadow-sm);
+  font-size:44px;font-weight:900;color:var(--ink);
+  cursor:pointer;transition:transform .1s;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;
+}
+.choice .cap{font-size:16px;color:var(--ink-soft);font-weight:700}
+.choice:hover{transform:translateY(-3px)}
+.choice:active{transform:translateY(2px)}
+.choice.correct{background:linear-gradient(180deg,#d9f8de,#7fd88a);animation:pop .4s}
+.choice.wrong{background:linear-gradient(180deg,#ffdada,#ff9a9a);animation:shake .4s}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* toolbar under question */
+.tools{display:flex;justify-content:center;gap:10px;margin-top:8px}
+.iconbtn{
+  width:56px;height:56px;border-radius:50%;border:none;
+  background:var(--card);box-shadow:var(--shadow-sm);cursor:pointer;
+  font-size:28px;transition:transform .1s;
+}
+.iconbtn:active{transform:translateY(2px)}
+
+/* ===== Result page ===== */
+.result{
+  text-align:center;background:var(--card);border-radius:var(--radius);
+  padding:32px 20px;box-shadow:var(--shadow);
+}
+.result .big{font-size:120px;line-height:1;filter:drop-shadow(0 10px 12px rgba(0,0,0,.18))}
+.result h2{font-size:36px;margin:8px 0}
+.result .stars{font-size:56px;letter-spacing:.1em}
+.result .stars .g{filter:drop-shadow(0 4px 6px rgba(255,180,0,.6))}
+.result .stars .o{opacity:.25;filter:grayscale(1)}
+.result .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+
+/* ===== Reward panel ===== */
+.reward-title{
+  text-align:center;font-size:30px;font-weight:900;margin:6px 0 14px;
+  color:#a5490b;text-shadow:0 3px 0 #fff, 0 8px 16px rgba(0,0,0,.1);
+}
+.riddle{
+  background:linear-gradient(180deg,#fff7dd,#ffe0a1);
+  border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);text-align:center;
+}
+.riddle .clue{font-size:26px;font-weight:800;line-height:1.5;padding:20px 8px;color:var(--ink)}
+.riddle .choices{margin-top:16px}
+.riddle .choice{min-height:120px;font-size:56px}
+
+/* Memory game */
+.memory{
+  background:linear-gradient(180deg,#e6f5ff,#c6e6ff);
+  border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+}
+.mem-grid{
+  display:grid;gap:12px;margin:0 auto;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  max-width:520px;
+}
+.mem-card{
+  aspect-ratio:1;border-radius:20px;border:none;cursor:pointer;
+  background:linear-gradient(180deg,var(--pink),var(--pink-d));
+  box-shadow:var(--shadow-sm);
+  font-size:44px;color:#fff;font-weight:900;
+  position:relative;perspective:600px;
+  transition:transform .1s;
+}
+.mem-card .face{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  border-radius:20px;backface-visibility:hidden;transition:transform .35s;
+}
+.mem-card .back{
+  background:linear-gradient(180deg,var(--violet),var(--violet-d));
+  color:#fff;
+}
+.mem-card .front{
+  background:linear-gradient(180deg,#fff,#eef5ff);color:var(--ink);
+  transform:rotateY(180deg);font-size:52px;
+}
+.mem-card.flipped .back{transform:rotateY(180deg)}
+.mem-card.flipped .front{transform:rotateY(360deg)}
+.mem-card.matched{opacity:.55;transform:scale(.95)}
+.mem-card:active{transform:translateY(2px)}
+
+/* Stickers */
+.stickers-wall{
+  display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+}
+.sticker{
+  aspect-ratio:1;border-radius:24px;background:linear-gradient(180deg,#fff,#f6f2ea);
+  display:flex;align-items:center;justify-content:center;font-size:52px;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.06), 0 4px 10px rgba(0,0,0,.08);
+  filter:grayscale(1) opacity(.35);transition:transform .2s;
+}
+.sticker.owned{
+  filter:none;background:linear-gradient(180deg,#fff7d6,#ffe0a1);
+  animation:pop .5s;
+}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:16%;transform:translateX(-50%) translateY(-30px);
+  background:rgba(58,44,31,.9);color:#fff;font-weight:800;font-size:20px;
+  padding:14px 22px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:opacity .25s, transform .25s;z-index:1000;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Sticker burst overlay */
+.burst{
+  position:fixed;inset:0;pointer-events:none;z-index:900;
+  display:flex;align-items:center;justify-content:center;
+}
+.burst .big{font-size:220px;animation:burst .9s ease-out forwards;filter:drop-shadow(0 20px 30px rgba(0,0,0,.3))}
+@keyframes burst{
+  0%{transform:scale(.1) rotate(-30deg);opacity:0}
+  40%{transform:scale(1.3) rotate(10deg);opacity:1}
+  100%{transform:scale(1) rotate(0);opacity:0}
+}
+
+/* Confetti dots */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:899;overflow:hidden}
+.confetti i{
+  position:absolute;top:-20px;width:14px;height:20px;border-radius:3px;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(720deg)}
+}
+
+/* Sticker pop earned */
+.earned{
+  position:fixed;inset:auto 0 24px 0;margin:0 auto;
+  background:var(--card);border-radius:24px;padding:14px 22px;
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;
+  max-width:340px;justify-content:center;
+  animation: slideUp .4s;
+  font-weight:800;
+}
+.earned .em{font-size:44px}
+@keyframes slideUp{from{transform:translateY(120%);opacity:0}to{transform:none;opacity:1}}
+
+/* small screens */
+@media (max-width: 480px){
+  .hero h1{font-size:34px}
+  .question{font-size:52px}
+  .question .hanzi{font-size:96px}
+  .choice{min-height:96px;font-size:36px}
+  .mem-grid{gap:8px}
+  .mem-card .front{font-size:40px}
+  body::before, body::after{font-size:44px}
+}
