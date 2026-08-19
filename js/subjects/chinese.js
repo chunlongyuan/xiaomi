@@ -78,7 +78,7 @@ function pickEmojiByHanziQ(pool, exclude){
     pinyin: target.pinyin,
     choices: opts.map(o => ({ label:o.emoji, value:o.char })),
     answer: target.char,
-    speak: `这个字：${target.char}，读作 ${target.pinyin}，找一找对应的图。`,
+    speak: target.char,                          // 只念字，不念拼音
     kind: 'emoji-by-hanzi',
     target: target.char,
   };
@@ -92,7 +92,7 @@ function pinyinQ(pool, exclude){
     display:`<div style="font-size:56px;color:var(--blue-d);font-weight:900">${target.pinyin}</div>`,
     choices: opts.map(o => ({ label:o.char, value:o.char })),
     answer: target.char,
-    speak: `请找出 ${target.pinyin}`,
+    speak: target.char,                          // 念对应汉字（发音正是那个拼音）
     kind: 'pinyin',
     target: target.char,
   };
@@ -106,7 +106,7 @@ function listenQ(pool, exclude){
     display: `<div style="font-size:80px">🔊</div>`,
     choices: opts.map(o => ({ label:o.char, value:o.char })),
     answer: target.char,
-    speak: `听好了：${target.char}。请选出 ${target.char}。`,
+    speak: target.char,                          // 只念一遍字，不念拼音
     kind: 'listen',
     target: target.char,
   };

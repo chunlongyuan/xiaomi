@@ -82,15 +82,15 @@ export function playWhack(ctx, onDone){
     holes[currentIdx].classList.remove('bonk');
     holes[currentIdx].classList.add('up');
     audio.pop();
-    // 停留时间加长；hits 越多越快一点点
-    const base = 2200 - Math.min(hits * 80, 400);
-    const dur = base + Math.random() * 400;
+    // 停留时间：初始 1.4s，hits 越多越快
+    const base = 1400 - Math.min(hits * 70, 500);
+    const dur = base + Math.random() * 300;
     timer = setTimeout(next2, dur);
   }
   function next2(){
     if(stopped) return;
     if(currentIdx >= 0) holes[currentIdx].classList.remove('up');
-    timer = setTimeout(show, 260 + Math.random()*260);
+    timer = setTimeout(show, 150 + Math.random()*200);
   }
   function hit(i){
     if(stopped) return;
@@ -126,8 +126,8 @@ export function playWhack(ctx, onDone){
       panel.querySelector('.whack-tip').textContent = '🏆 完成任务！';
       setTimeout(()=> onDone(true), 700);
     } else {
-      // 稍作停顿再出下一只
-      timer = setTimeout(show, 500);
+      // 命中后短暂停顿再出下一只
+      timer = setTimeout(show, 280);
     }
   }
   // 启动
