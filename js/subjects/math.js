@@ -242,8 +242,11 @@ function wordQ(max){
 
 /* ---------- 关卡组合 ---------- */
 
+function qKey(q){
+  return `${q.kind||''}|${q.prompt||''}|${q.display||''}|${q.answer||''}`;
+}
+
 export function makeMathLevel(n=5, level=20){
-  const qs = [];
   const pool = [];
   if(level <= 10){
     // 10 以内：加减为主，加入思维训练（找规律、填空、应用题、数数、比大小）
@@ -282,9 +285,21 @@ export function makeMathLevel(n=5, level=20){
       ()=>wordQ(100),
     );
   }
-  for(let i=0;i<n;i++){
+  const qs = [];
+  const seen = new Set();
+  const kindCount = {};                       // 每种题型最多出现 2 次，尽量多样
+  let attempts = 0;
+  while(qs.length < n && attempts < n * 40){
     const g = pool[rand(0, pool.length-1)];
-    qs.push(g());
+    const q = g();
+    const key = qKey(q);
+    if(seen.has(key)){ attempts++; continue; }
+    const k = q.kind || 'x';
+    if((kindCount[k] || 0) >= 2 && attempts < n * 20){ attempts++; continue; }
+    seen.add(key);
+    kindCount[k] = (kindCount[k] || 0) + 1;
+    qs.push(q);
+    attempts++;
   }
   return qs;
 }

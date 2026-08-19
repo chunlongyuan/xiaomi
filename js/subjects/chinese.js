@@ -10,9 +10,15 @@ async function ensureData(){
   return DATA;
 }
 
-// 图 → 选字 （显示 emoji，选正确的汉字）
-function pickHanziByEmojiQ(hanzi){
-  const target = hanzi[rand(0, hanzi.length-1)];
+function pickTarget(hanzi, exclude){
+  // 从未用过的汉字里挑
+  const pool = exclude && exclude.size ? hanzi.filter(h => !exclude.has(h.char)) : hanzi;
+  return (pool.length ? pool : hanzi)[rand(0, (pool.length ? pool : hanzi).length-1)];
+}
+
+// 图 → 选字
+function pickHanziByEmojiQ(hanzi, exclude){
+  const target = pickTarget(hanzi, exclude);
   const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
@@ -21,12 +27,14 @@ function pickHanziByEmojiQ(hanzi){
     choices: opts.map(o => ({ label:o.char, value:o.char })),
     answer: target.char,
     speak: '哪个字表示这个？',
+    kind: 'hanzi-by-emoji',
+    target: target.char,
   };
 }
 
-// 字 → 选图 （显示汉字，选正确的图）
-function pickEmojiByHanziQ(hanzi){
-  const target = hanzi[rand(0, hanzi.length-1)];
+// 字 → 选图
+function pickEmojiByHanziQ(hanzi, exclude){
+  const target = pickTarget(hanzi, exclude);
   const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
@@ -36,12 +44,14 @@ function pickEmojiByHanziQ(hanzi){
     choices: opts.map(o => ({ label:o.emoji, value:o.char })),
     answer: target.char,
     speak: `这个字：${target.char}，读作 ${target.pinyin}，找一找对应的图。`,
+    kind: 'emoji-by-hanzi',
+    target: target.char,
   };
 }
 
 // 拼音 → 选字
-function pinyinQ(hanzi){
-  const target = hanzi[rand(0, hanzi.length-1)];
+function pinyinQ(hanzi, exclude){
+  const target = pickTarget(hanzi, exclude);
   const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
@@ -50,12 +60,14 @@ function pinyinQ(hanzi){
     choices: opts.map(o => ({ label:o.char, value:o.char })),
     answer: target.char,
     speak: `请找出 ${target.pinyin}`,
+    kind: 'pinyin',
+    target: target.char,
   };
 }
 
-// 听音选字（无 display）
-function listenQ(hanzi){
-  const target = hanzi[rand(0, hanzi.length-1)];
+// 听音选字
+function listenQ(hanzi, exclude){
+  const target = pickTarget(hanzi, exclude);
   const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
@@ -64,6 +76,8 @@ function listenQ(hanzi){
     choices: opts.map(o => ({ label:o.char, value:o.char })),
     answer: target.char,
     speak: `听好了：${target.char}。请选出 ${target.char}。`,
+    kind: 'listen',
+    target: target.char,
   };
 }
 
@@ -84,9 +98,19 @@ export function makeChineseLevel(n=5){
   }
   const gens = [pickHanziByEmojiQ, pickEmojiByHanziQ, pinyinQ, listenQ];
   const qs = [];
-  for(let i=0;i<n;i++){
+  const usedChars = new Set();          // 已考过的字不再重复
+  const kindCount = {};                 // 同一题型最多 2 次
+  let attempts = 0;
+  while(qs.length < n && attempts < n * 40){
     const g = gens[rand(0, gens.length-1)];
-    qs.push(g(cache.hanzi));
+    const q = g(cache.hanzi, usedChars);
+    if(usedChars.has(q.target)){ attempts++; continue; }
+    const k = q.kind || 'x';
+    if((kindCount[k] || 0) >= 2 && attempts < n * 20){ attempts++; continue; }
+    usedChars.add(q.target);
+    kindCount[k] = (kindCount[k] || 0) + 1;
+    qs.push(q);
+    attempts++;
   }
   return qs;
 }
