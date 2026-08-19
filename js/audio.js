@@ -1,4 +1,5 @@
-// TTS + 音效，含 iOS 首次点击 unlock 和静音开关
+// TTS + 音效
+// 优化：优先选增强版/云端 zh 声音；节奏 / 音调 更接近小朋友说话；短句和停顿更自然
 import { store } from './storage.js';
 
 let ac = null;
@@ -33,20 +34,58 @@ function beep({freq=600, dur=0.12, type='sine', gain=0.15, when=0, slideTo=null}
   osc.start(t0); osc.stop(t0+dur+0.02);
 }
 
-// 挑一个中文声音（iOS 有 Ting-Ting / Sinji 等；桌面 Chrome 有 zh-CN 声）
-let zhVoice = null;
-function pickVoice(){
-  if(zhVoice) return zhVoice;
+/* ---------- 语音选择：优先最自然的中文声音 ---------- */
+// 排名依据：iOS/macOS 上 Enhanced/Premium/Yu-shu/Tingting-Enhanced 最自然；
+// Windows 上 Xiaoxiao / Xiaoyi / Yunxi 最自然（Neural）；Chrome cloud 声音也不错。
+
+const VOICE_RANK = [
+  /yu[-_ ]?shu/i, /瑜书/,
+  /xiaoxiao/i, /晓晓/, /xiaoyi/i, /晓伊/, /yunxi/i, /云希/,
+  /premium/i, /enhanced/i, /neural/i,
+  /tingting/i, /ting[-_ ]?ting/i, /婷婷/,
+  /sin[-_ ]?ji/i, /sinji/i,
+  /google.*中文|google.*chinese/i,
+];
+let voiceCache = null;
+function loadVoices(){
   try{
-    const list = window.speechSynthesis.getVoices();
-    zhVoice = list.find(v => /zh[-_]CN/i.test(v.lang))
-           || list.find(v => /zh/i.test(v.lang))
-           || null;
-  }catch{}
-  return zhVoice;
+    const list = window.speechSynthesis.getVoices() || [];
+    // 先只留中文
+    const zh = list.filter(v => /zh|chinese|中文/i.test(v.lang) || /zh|chinese/i.test(v.name));
+    // 打分（分数越低越靠前）
+    zh.sort((a,b) => rank(a) - rank(b));
+    voiceCache = zh;
+    return zh;
+  }catch{ return []; }
+}
+function rank(v){
+  const s = `${v.name} ${v.voiceURI||''}`;
+  for(let i=0;i<VOICE_RANK.length;i++){
+    if(VOICE_RANK[i].test(s)) return i;
+  }
+  // zh-CN 优先于 zh-TW / zh-HK
+  if(/zh[-_]CN/i.test(v.lang)) return 100;
+  if(/zh/i.test(v.lang)) return 200;
+  return 999;
+}
+function pickVoice(){
+  const list = voiceCache || loadVoices();
+  return list[0] || null;
 }
 if('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged = () => { zhVoice = null; pickVoice(); };
+  window.speechSynthesis.onvoiceschanged = () => { voiceCache = null; loadVoices(); };
+  loadVoices();
+}
+
+/* ---------- 说话 ---------- */
+// 加短逗号 / 停顿让机器感变弱；数字之间加空格提高清晰度
+function humanize(text){
+  let t = String(text);
+  // 常见搭配加短停顿（用中文逗号触发 TTS 自然停顿）
+  t = t.replace(/([0-9]+)\s*(加|减|加上|减去)\s*([0-9]+)/g, '$1 $2 $3');
+  t = t.replace(/等于几/g, '，等于几');
+  t = t.replace(/哪个/g, '哪，个');   // "哪个" TTS 有时读得太快
+  return t;
 }
 
 function speak(text, opts={}){
@@ -54,18 +93,17 @@ function speak(text, opts={}){
   if(!('speechSynthesis' in window)) return;
   try{
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(String(text));
+    const u = new SpeechSynthesisUtterance(humanize(text));
     u.lang  = opts.lang  || 'zh-CN';
     const v = pickVoice(); if(v) u.voice = v;
-    u.rate  = opts.rate  ?? 0.92;
-    u.pitch = opts.pitch ?? 1.1;
-    u.volume= opts.volume?? 1;
+    u.rate  = opts.rate  ?? 0.88;   // 稍慢一点更清楚
+    u.pitch = opts.pitch ?? 1.0;    // 用自然音高，不再刻意抬高（原来的 1.15 反而机器感重）
+    u.volume= opts.volume ?? 1;
     window.speechSynthesis.speak(u);
   }catch{}
 }
 
 export const audio = {
-  // 每次用户手势都调，尝试 resume；首次也做无声 TTS 唤醒
   unlock(){
     tryResume();
     if(unlocked) return;
@@ -75,7 +113,7 @@ export const audio = {
         const u = new SpeechSynthesisUtterance(' ');
         u.volume = 0.001; u.lang = 'zh-CN';
         window.speechSynthesis.speak(u);
-        pickVoice();
+        loadVoices();
       }
     }catch{}
     beep({freq:1, dur:0.001, gain:0.0001});
@@ -94,4 +132,11 @@ export const audio = {
     notes.forEach((f,i)=> beep({freq:f, dur:.2, type:'triangle', gain:.15, when:i*.12}));
   },
   pop(){ beep({freq:900, dur:.08, type:'square', gain:.08}); },
+  bonk(){
+    beep({freq:180, dur:.06, type:'square', gain:.18});
+    beep({freq:90,  dur:.10, type:'square', gain:.14, when:.05});
+  },
+  // 列出可用中文声音（供设置页用）
+  listChineseVoices(){ return (voiceCache || loadVoices()).slice(); },
+  currentVoiceName(){ return pickVoice()?.name || ''; },
 };

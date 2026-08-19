@@ -305,32 +305,85 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 .skip-row{display:flex;justify-content:center;margin-top:16px}
 .btn.small{min-height:44px;font-size:15px;padding:6px 16px}
 
-/* ===== Whack-a-mole ===== */
-.whack-hud{text-align:center;color:var(--ink);font-weight:700;font-size:16px;margin:2px 0 12px}
-.whack-hud b{color:var(--pink-d);font-size:22px}
+/* ===== Whack-a-mole v2 ===== */
+.whack-hud{margin:2px 0 12px}
+.wh-progress{
+  display:flex;justify-content:center;gap:6px;font-size:28px;margin-bottom:6px;
+  min-height:36px;
+}
+.wp{filter:grayscale(1) opacity(.3);transition:transform .2s, filter .2s;display:inline-block}
+.wp.on{filter:none;animation:pop .5s;transform:scale(1.15)}
+.wh-meta{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;
+  padding:0 4px;color:var(--ink-soft);font-weight:700;font-size:14px;
+}
+.wh-meta b{color:var(--pink-d);font-size:18px}
+.wh-diff{display:inline-flex;gap:6px}
+.wh-diff .chip{
+  background:var(--card);border:2px solid transparent;border-radius:99px;
+  padding:4px 10px;font-size:13px;font-weight:800;color:var(--ink);cursor:pointer;
+  box-shadow:var(--shadow-sm);
+}
+.wh-diff .chip.on{border-color:var(--yellow-d);background:linear-gradient(180deg,#fff7d6,#ffe8a3)}
+
+.whack-tip{text-align:center;color:var(--ink-soft);font-weight:700;font-size:14px;margin-top:12px}
+
 .whack-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
   max-width:420px;margin:0 auto;
 }
 .whack-hole{
   aspect-ratio:1;border:none;cursor:pointer;
   border-radius:50%;
-  background:radial-gradient(ellipse at 50% 65%, #7a4a25 0%, #4a2a10 60%, #2a1608 100%);
-  box-shadow:inset 0 6px 8px rgba(0,0,0,.45), 0 6px 0 rgba(0,0,0,.15);
+  background:
+    radial-gradient(ellipse at 50% 25%, rgba(255,255,255,.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 70%, #7a4a25 0%, #4a2a10 55%, #26140a 100%);
+  box-shadow:
+    inset 0 8px 10px rgba(0,0,0,.55),
+    inset 0 -3px 0 rgba(255,255,255,.05),
+    0 6px 0 rgba(0,0,0,.15);
   position:relative;overflow:hidden;
+  transition:transform .1s;
 }
+.whack-hole:active{transform:translateY(2px)}
 .whack-hole .mole{
-  position:absolute;left:0;right:0;bottom:-100%;
-  font-size:52px;line-height:1;text-align:center;
-  transition:bottom .18s cubic-bezier(.5,1.6,.5,1);
-  filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));
+  position:absolute;left:0;right:0;bottom:-110%;
+  font-size:56px;line-height:1;text-align:center;
+  transition:bottom .22s cubic-bezier(.5,1.7,.5,1);
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.5));
+  pointer-events:none;
 }
-.whack-hole.up .mole{bottom:20%}
-.whack-hole.bonk{animation:bonk .3s}
-@keyframes bonk{
-  0%{transform:scale(1)}
-  40%{transform:scale(1.15) rotate(-4deg);background:radial-gradient(ellipse at 50% 65%, #ffd35a 0%, #e8b634 60%, #a5490b 100%)}
-  100%{transform:scale(1)}
+.whack-hole.up .mole{bottom:18%}
+.whack-hole.bonk .mole{
+  animation:squish .35s ease-out forwards;
+}
+@keyframes squish{
+  0%{ transform:scale(1) rotate(0); }
+  40%{ transform:scale(1.5,.6) rotate(-6deg); }
+  70%{ transform:scale(.8,1.1) rotate(4deg); opacity:.5; }
+  100%{ transform:scale(.3,.2) translateY(30px); opacity:0; }
+}
+.whack-hole.miss{ animation:mole-miss .24s; }
+@keyframes mole-miss{
+  0%,100%{ background:radial-gradient(ellipse at 50% 25%, rgba(255,255,255,.08) 0%, transparent 40%),
+           radial-gradient(ellipse at 50% 70%, #7a4a25 0%, #4a2a10 55%, #26140a 100%); }
+  50%{ background:radial-gradient(ellipse at 50% 70%, #b04a4a 0%, #6a1e1e 55%, #260808 100%); }
+}
+.whack-hole .pt{
+  position:absolute;left:50%;top:8%;transform:translate(-50%, 0);
+  font-weight:900;color:#ffd35a;font-size:26px;
+  text-shadow:0 2px 0 #a5490b, 0 6px 10px rgba(0,0,0,.4);
+  opacity:0;pointer-events:none;
+}
+.whack-hole .pt.show{ animation:ptFly .7s ease-out forwards; }
+@keyframes ptFly{
+  0%{ opacity:0; transform:translate(-50%, 20px) scale(.6); }
+  25%{ opacity:1; transform:translate(-50%, -8px) scale(1.2); }
+  100%{ opacity:0; transform:translate(-50%, -70px) scale(1); }
+}
+@media (max-width: 480px){
+  .whack-hole .mole{font-size:48px}
+  .wh-progress{font-size:24px}
 }
 
 /* ===== Reward panel ===== */
