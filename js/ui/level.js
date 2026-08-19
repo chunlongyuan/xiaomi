@@ -104,7 +104,7 @@ export function renderLevel(ctx){
     }
   }
 
-  function showHint(q){
+  function showHint(q, onClose){
     if(!q.hint) return;
     const overlay = el('div','hint-overlay');
     overlay.innerHTML = `
@@ -114,9 +114,15 @@ export function renderLevel(ctx){
         <button class="btn yellow" data-close>知道啦</button>
       </div>`;
     document.body.appendChild(overlay);
-    const close = ()=> overlay.remove();
+    let done = false;
+    const close = ()=> {
+      if(done) return;
+      done = true;
+      overlay.remove();
+      if(onClose) onClose();
+    };
+    // 只允许"知道啦"按钮关闭（不再点背景关闭，避免误触）
     overlay.querySelector('[data-close]').addEventListener('click', ()=>{ audio.tap(); close(); });
-    overlay.addEventListener('click', e => { if(e.target===overlay) close(); });
   }
 
   function answer(btn, value, q){
@@ -146,8 +152,8 @@ export function renderLevel(ctx){
         });
         results[idx] = 'wrong';
         if(q.hint){
-          showHint(q);
-          setTimeout(()=>{ document.querySelector('.hint-overlay')?.remove(); idx++; attempts=0; render(); }, 3500);
+          // 提示弹窗停留，直到点 "知道啦" 才关闭并进入下一题
+          showHint(q, ()=>{ idx++; attempts = 0; render(); });
         } else {
           toast('正确答案是 ' + q.answer, 1500);
           setTimeout(()=>{ idx++; attempts = 0; render(); }, 1500);
