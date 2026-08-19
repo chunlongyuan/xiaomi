@@ -30,6 +30,34 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Cache-bust static assets with commit SHA
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            const V = (process.env.GITHUB_SHA || "dev").slice(0, 8);
+            function walk(dir){
+              for(const f of fs.readdirSync(dir)){
+                if(f.startsWith(".")) continue;
+                const p = path.join(dir, f);
+                const st = fs.statSync(p);
+                if(st.isDirectory()) walk(p);
+                else if(/\.(js|html|css)$/.test(f)){
+                  let s = fs.readFileSync(p, "utf8");
+                  // import ... from "./x.js"
+                  s = s.replace(/((?:from|import)\s*[\x22\x27])((?:\.{1,2}\/)?[\w\-\/.]+\.(?:js|json))([\x22\x27])/g, (m,a,b,c)=> `${a}${b}?v=${V}${c}`);
+                  // <link href="./x.css"> / <script src="./x.js">
+                  s = s.replace(/(href|src)=([\x22\x27])((?:\.{1,2}\/)?[\w\-\/.]+\.(?:js|css))([\x22\x27])/g, (m,a,q,b,r)=> `${a}=${q}${b}?v=${V}${r}`);
+                  // new URL("./data.json", import.meta.url)
+                  s = s.replace(/new URL\(\s*[\x22\x27]((?:\.{1,2}\/)?[\w\-\/.]+\.(?:json|js|css))[\x22\x27]/g, (m,b)=> `new URL(\x22${b}?v=${V}\x22`);
+                  fs.writeFileSync(p, s);
+                }
+              }
+            }
+            walk(".");
+            console.log("Cache-busted assets with v=" + V);
+          '
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
