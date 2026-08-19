@@ -90,7 +90,7 @@ export function renderLevel(ctx){
       const value = typeof c === 'string' ? c : c.value;
       const b = el('button','choice');
       b.innerHTML = typeof c === 'string' ? label
-        : `<div>${label}</div><div class="cap">${value}</div>`;
+        : `<div>${label}</div>${label !== value ? `<div class="cap">${value}</div>` : ''}`;
       b.dataset.value = value;
       b.addEventListener('click', ()=> answer(b, value, q));
       choices.appendChild(b);
