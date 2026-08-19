@@ -494,6 +494,63 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   .balloon-item{width:64px;height:64px;font-size:58px}
 }
 
+/* ===== Spot the difference ===== */
+.spot{background:linear-gradient(180deg,#e5dbff,#c8b8ff);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow)}
+.spot-hint{text-align:center;font-weight:800;color:var(--ink-soft);margin:6px 0 12px;font-size:15px}
+.spot-hint b{color:var(--pink-d)}
+.spot-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  max-width:420px;margin:0 auto;
+}
+.spot-cell{
+  aspect-ratio:1;border:none;border-radius:20px;cursor:pointer;
+  background:linear-gradient(180deg,#fff,#f6f2ea);
+  box-shadow:var(--shadow-sm);
+  font-size:52px;line-height:1;
+  transition:transform .1s;
+}
+.spot-cell:active{transform:translateY(2px)}
+.spot-cell.correct{background:linear-gradient(180deg,#d9f8de,#7fd88a);animation:pop .4s}
+.spot-cell.wrong{background:linear-gradient(180deg,#ffdada,#ff9a9a);animation:shake .3s}
+@media (max-width:480px){ .spot-cell{font-size:42px} }
+
+/* ===== Catch fruit ===== */
+.catch{background:linear-gradient(180deg,#fff2c9,#ffdb7a);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow)}
+.catch-arena{
+  position:relative;height:420px;overflow:hidden;
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.2));
+  margin-top:10px;
+  touch-action:none;
+}
+.catch-basket{
+  position:absolute;bottom:8px;
+  transform:translateX(-50%);
+  font-size:72px;line-height:1;
+  filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));
+  transition:left .18s cubic-bezier(.4,1.4,.4,1);
+  pointer-events:none;
+}
+.catch-basket.bounce{animation:bounce-b .25s}
+@keyframes bounce-b{ 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-50%) scale(1.2)} }
+.catch-fruit{
+  position:absolute;top:-70px;
+  font-size:52px;line-height:1;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.25));
+  animation: fruit-fall linear forwards;
+  pointer-events:none;
+}
+@keyframes fruit-fall{
+  0%   { top:-70px; transform:translateX(-50%) rotate(0); }
+  100% { top:calc(100% - 50px); transform:translateX(-50%) rotate(90deg); }
+}
+@media (max-width:480px){
+  .catch-arena{height:360px}
+  .catch-basket{font-size:60px}
+  .catch-fruit{font-size:44px}
+}
+
 /* ===== Reward panel ===== */
 .riddle{background:linear-gradient(180deg,#fff7dd,#ffe0a1);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:center}
 .riddle .clue{font-size:22px;font-weight:800;line-height:1.6;padding:16px 4px;color:var(--ink)}
