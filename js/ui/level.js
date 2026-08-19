@@ -38,7 +38,7 @@ export function renderLevel(ctx){
     panel.appendChild(p);
 
     // 副标题
-    const tierName = { basic:'🌱 基础', middle:'🌿 进阶', advanced:'🌳 挑战' }[tier] || '';
+    const tierName = { sprout:'🌱 启蒙', leaf:'🌿 认字入门', tree:'🌳 拓展识字', pine:'🌲 幼小衔接' }[tier] || '';
     const subtitle = el('div','level-sub', subject==='math'
       ? `🧮 ${level||'?'} 以内`
       : `📚 ${tierName}`);

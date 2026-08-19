@@ -19,8 +19,8 @@ function newProfile(name, avatar){
     soundOn: true,
     lastReward: null,           // 上次选的奖励游戏 id
     stats: {
-      math:    { correct:0, wrong:0, byLevel:{ 10:{c:0,w:0}, 20:{c:0,w:0}, 50:{c:0,w:0}, 100:{c:0,w:0} } },
-      chinese: { correct:0, wrong:0, byTier:{ basic:{c:0,w:0}, middle:{c:0,w:0}, advanced:{c:0,w:0} } },
+      math:    { correct:0, wrong:0, byLevel:{ 5:{c:0,w:0}, 10:{c:0,w:0}, 20:{c:0,w:0}, 50:{c:0,w:0}, 100:{c:0,w:0} } },
+      chinese: { correct:0, wrong:0, byTier:{ sprout:{c:0,w:0}, leaf:{c:0,w:0}, tree:{c:0,w:0}, pine:{c:0,w:0} } },
     },
     sessions: [],
   };

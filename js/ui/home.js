@@ -31,8 +31,8 @@ export function renderHome(ctx){
   root.appendChild(hero);
 
   const grid = el('div', 'grid');
-  grid.appendChild(subjectCard('math',     '数学乐园', '🧮', '🌱 中班 · 🌿 大班 · 🌳 学前 · 🌲 一年级'));
-  grid.appendChild(subjectCard('chinese',  '语文乐园', '📚', '🌱 基础 · 🌿 进阶 · 🌳 挑战'));
+  grid.appendChild(subjectCard('math',     '数学乐园', '🧮', '5 档：3 岁到一年级'));
+  grid.appendChild(subjectCard('chinese',  '语文乐园', '📚', '4 档：启蒙到一年级'));
   grid.appendChild(subjectCard('stickers', '贴纸收集', '🌟', `已收集 ${p.stickers.length} 枚`));
   grid.appendChild(subjectCard('stats',    '我的记录', '📊', `${p.levelsCompleted} 关 · 🔥${p.streak}`));
   root.appendChild(grid);

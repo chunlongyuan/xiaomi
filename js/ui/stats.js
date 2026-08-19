@@ -33,8 +33,8 @@ export function renderStats(ctx){
     <div class="stat-row"><span>正确率</span><b>${mAcc}%</b></div>
     <div class="stat-bar"><div class="fill" style="width:${mAcc}%;background:linear-gradient(90deg,#7fd88a,#4fbf60)"></div></div>
     <div class="stat-sub">
-      ${['10','20','50','100'].map(lv => {
-        const b = s.math.byLevel[lv] || {c:0,w:0}; const t=b.c+b.w;
+      ${['5','10','20','50','100'].map(lv => {
+        const b = (s.math.byLevel && s.math.byLevel[lv]) || {c:0,w:0}; const t=b.c+b.w;
         return `<div class="stat-mini"><b>${lv} 以内</b><span>${t?`${b.c}/${t}`:'—'}</span></div>`;
       }).join('')}
     </div>
@@ -44,7 +44,7 @@ export function renderStats(ctx){
     <div class="stat-row"><span>正确率</span><b>${cAcc}%</b></div>
     <div class="stat-bar"><div class="fill" style="width:${cAcc}%;background:linear-gradient(90deg,#ff9ec4,#e5548a)"></div></div>
     <div class="stat-sub">
-      ${[['basic','🌱 基础'],['middle','🌿 进阶'],['advanced','🌳 挑战']].map(([tid, label]) => {
+      ${[['sprout','🌱 启蒙'],['leaf','🌿 入门'],['tree','🌳 拓展'],['pine','🌲 一年级']].map(([tid, label]) => {
         const b = (s.chinese.byTier && s.chinese.byTier[tid]) || {c:0,w:0}; const t=b.c+b.w;
         return `<div class="stat-mini"><b>${label}</b><span>${t?`${b.c}/${t}`:'—'}</span></div>`;
       }).join('')}

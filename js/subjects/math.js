@@ -248,8 +248,16 @@ function qKey(q){
 
 export function makeMathLevel(n=5, level=20){
   const pool = [];
-  if(level <= 10){
-    // 10 以内：加减为主，加入思维训练（找规律、填空、应用题、数数、比大小）
+  if(level <= 5){
+    // 5 以内（3-4 岁小班）：数数、比大小、5 以内加减、简单排序
+    pool.push(
+      ()=>makeAdd(5), ()=>makeAdd(5),
+      ()=>makeSub(5),
+      countQ, countQ,
+      ()=>compareQ(5), ()=>compareQ(5),
+      ()=>patternQ(5),
+    );
+  } else if(level <= 10){
     pool.push(
       ()=>makeAdd(10), ()=>makeAdd(10),
       ()=>makeSub(10), ()=>makeSub(10),

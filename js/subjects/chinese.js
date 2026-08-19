@@ -28,16 +28,15 @@ export function chineseStatsByTier(){
   return m;
 }
 
-// 按分级筛选可用字库；不指定或"all"时用全库
+// 按分级筛选可用字库；本级 + 上一级作干扰项池
 function hanziByTier(tier){
   if(!cache) return [];
   if(!tier || tier === 'all') return cache.hanzi;
-  // 允许答题范围略宽：本级 + 上一级作为干扰项池
-  const order = ['basic', 'middle', 'advanced'];
+  const order = cache.tiers.map(t => t.id);
   const idx = order.indexOf(tier);
   const allowed = idx >= 0 ? new Set(order.slice(0, idx+1)) : new Set([tier]);
   const list = cache.hanzi.filter(h => allowed.has(h.tier));
-  return list.length ? list : cache.hanzi;
+  return list.length >= 4 ? list : cache.hanzi;
 }
 
 function pickTarget(pool, exclude){
@@ -103,7 +102,7 @@ function listenQ(pool, exclude){
   };
 }
 
-export function makeChineseLevel(n=5, tier='basic'){
+export function makeChineseLevel(n=5, tier='sprout'){
   if(!cache){
     console.warn('中文题库尚未加载完成');
     return [];
