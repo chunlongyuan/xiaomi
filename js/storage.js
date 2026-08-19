@@ -17,6 +17,7 @@ function newProfile(name, avatar){
     stickers: [],
     levelsCompleted: 0,
     soundOn: true,
+    lastReward: null,           // 上次选的奖励游戏 id
     stats: {
       math:    { correct:0, wrong:0, byLevel:{ 10:{c:0,w:0}, 20:{c:0,w:0}, 50:{c:0,w:0}, 100:{c:0,w:0} } },
       chinese: { correct:0, wrong:0 },
@@ -119,4 +120,6 @@ export const store = {
     persist();
   },
   setSound(on){ const p=cur(); if(!p) return; p.soundOn = !!on; persist(); },
+  setLastReward(id){ const p=cur(); if(!p) return; p.lastReward = id; persist(); },
+  get lastReward(){ return cur()?.lastReward || null; },
 };

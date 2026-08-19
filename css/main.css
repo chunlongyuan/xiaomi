@@ -282,6 +282,57 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 .session .s-tm{font-size:12px;opacity:.7}
 .empty{padding:22px;text-align:center;color:var(--ink-soft);font-weight:700}
 
+/* ===== Reward picker ===== */
+.pick-sub{text-align:center;color:var(--ink-soft);font-weight:700;margin:-8px 0 14px;font-size:14px}
+.reward-picker{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.reward-card{
+  min-height:120px;border-radius:22px;border:3px solid transparent;
+  background:linear-gradient(180deg,#fff,#f6f2ea);
+  box-shadow:var(--shadow-sm);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  padding:12px;position:relative;transition:transform .1s;
+}
+.reward-card:active{transform:translateY(2px)}
+.reward-card .rc-emoji{font-size:56px;line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.18))}
+.reward-card .rc-title{font-weight:900;font-size:18px;color:var(--ink)}
+.reward-card .rc-last{
+  position:absolute;top:8px;right:10px;font-size:11px;font-weight:800;
+  background:linear-gradient(180deg,#ffe28a,#ffbf47);color:#5a3d00;
+  padding:2px 8px;border-radius:99px;
+}
+.reward-card.last{border-color:var(--yellow-d);background:linear-gradient(180deg,#fff7d6,#ffe8a3)}
+.reward-card.random{background:linear-gradient(180deg,#e5dbff,#c8b8ff)}
+.skip-row{display:flex;justify-content:center;margin-top:16px}
+.btn.small{min-height:44px;font-size:15px;padding:6px 16px}
+
+/* ===== Whack-a-mole ===== */
+.whack-hud{text-align:center;color:var(--ink);font-weight:700;font-size:16px;margin:2px 0 12px}
+.whack-hud b{color:var(--pink-d);font-size:22px}
+.whack-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  max-width:420px;margin:0 auto;
+}
+.whack-hole{
+  aspect-ratio:1;border:none;cursor:pointer;
+  border-radius:50%;
+  background:radial-gradient(ellipse at 50% 65%, #7a4a25 0%, #4a2a10 60%, #2a1608 100%);
+  box-shadow:inset 0 6px 8px rgba(0,0,0,.45), 0 6px 0 rgba(0,0,0,.15);
+  position:relative;overflow:hidden;
+}
+.whack-hole .mole{
+  position:absolute;left:0;right:0;bottom:-100%;
+  font-size:52px;line-height:1;text-align:center;
+  transition:bottom .18s cubic-bezier(.5,1.6,.5,1);
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));
+}
+.whack-hole.up .mole{bottom:20%}
+.whack-hole.bonk{animation:bonk .3s}
+@keyframes bonk{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.15) rotate(-4deg);background:radial-gradient(ellipse at 50% 65%, #ffd35a 0%, #e8b634 60%, #a5490b 100%)}
+  100%{transform:scale(1)}
+}
+
 /* ===== Reward panel ===== */
 .riddle{background:linear-gradient(180deg,#fff7dd,#ffe0a1);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:center}
 .riddle .clue{font-size:22px;font-weight:800;line-height:1.6;padding:16px 4px;color:var(--ink)}
@@ -357,6 +408,10 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   .mem-grid{gap:8px}
   .mem-card .front{font-size:36px}
   body::before, body::after{font-size:40px}
+  .reward-card{min-height:100px}
+  .reward-card .rc-emoji{font-size:44px}
+  .reward-card .rc-title{font-size:16px}
+  .whack-hole .mole{font-size:42px}
   .profile-chip{max-width:140px}
   .profile-chip .nm{max-width:80px;font-size:14px}
   .stars-pill{font-size:14px;padding:5px 10px}
