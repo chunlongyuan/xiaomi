@@ -9,7 +9,7 @@
 import { el, rand } from '../ui/common.js';
 
 const MOLES = ['🦁','🐼','🐰','🦄','🐸','🐵','🐨','🐯','🐧','🦊','🐶','🐱','🐔','🐮'];
-const CHEERS = ['打中啦！','太棒了！','厉害！','666！','真准！','好眼力！'];
+const CHEERS = ['打中啦！','太棒了！','厉害！','真准！','好眼力！'];
 
 export function playWhack(ctx, onDone){
   const { root, audio } = ctx;

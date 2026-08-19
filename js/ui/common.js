@@ -94,7 +94,7 @@ export function burst(emoji='🎉'){
   setTimeout(()=>wrap.remove(), 900);
 }
 
-const PRAISE = ['太棒了！','答对啦！','真聪明！','厉害！','了不起！','你真棒！','太厉害了！','666！'];
+const PRAISE = ['太棒了！','答对啦！','真聪明！','厉害！','了不起！','你真棒！','太厉害了！'];
 export function praise(){ return PRAISE[Math.floor(Math.random()*PRAISE.length)]; }
 
 export function shuffle(arr){

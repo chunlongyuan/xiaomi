@@ -144,6 +144,11 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 .question .pinyin{font-size:28px;color:var(--ink-soft);width:100%;margin-top:4px}
 .question .prompt{font-size:22px;color:var(--ink-soft);font-weight:700;width:100%}
 .question .qbig{font-size:52px;letter-spacing:6px;width:100%}
+.question .seq{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 10px;width:100%}
+.question .seq .op{color:var(--ink-soft);font-size:32px;padding:0 2px}
+.question .prompt{line-height:1.4}
+.question .prompt b{color:var(--pink-d);font-size:1.1em}
+@media (max-width: 480px){ .question .seq{font-size:38px !important} }
 
 .tools{display:flex;justify-content:center;gap:10px;margin:2px 0 10px}
 .iconbtn{
