@@ -11,10 +11,15 @@ function ensureAC(){
   }
   return ac;
 }
+function tryResume(){
+  const a = ensureAC(); if(!a) return;
+  if(a.state === 'suspended'){ try{ a.resume(); }catch{} }
+}
 
 function beep({freq=600, dur=0.12, type='sine', gain=0.15, when=0, slideTo=null}={}){
   if(!store.soundOn) return;
-  const a = ensureAC(); if(!a) return;
+  tryResume();
+  const a = ac; if(!a) return;
   const t0 = a.currentTime + when;
   const osc = a.createOscillator();
   const g = a.createGain();
@@ -28,6 +33,22 @@ function beep({freq=600, dur=0.12, type='sine', gain=0.15, when=0, slideTo=null}
   osc.start(t0); osc.stop(t0+dur+0.02);
 }
 
+// 挑一个中文声音（iOS 有 Ting-Ting / Sinji 等；桌面 Chrome 有 zh-CN 声）
+let zhVoice = null;
+function pickVoice(){
+  if(zhVoice) return zhVoice;
+  try{
+    const list = window.speechSynthesis.getVoices();
+    zhVoice = list.find(v => /zh[-_]CN/i.test(v.lang))
+           || list.find(v => /zh/i.test(v.lang))
+           || null;
+  }catch{}
+  return zhVoice;
+}
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = () => { zhVoice = null; pickVoice(); };
+}
+
 function speak(text, opts={}){
   if(!store.soundOn) return;
   if(!('speechSynthesis' in window)) return;
@@ -35,6 +56,7 @@ function speak(text, opts={}){
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(String(text));
     u.lang  = opts.lang  || 'zh-CN';
+    const v = pickVoice(); if(v) u.voice = v;
     u.rate  = opts.rate  ?? 0.92;
     u.pitch = opts.pitch ?? 1.1;
     u.volume= opts.volume?? 1;
@@ -42,20 +64,20 @@ function speak(text, opts={}){
   }catch{}
 }
 
-// iOS 需要在用户手势内首次触发一次 speak/audio，之后才允许
 export const audio = {
+  // 每次用户手势都调，尝试 resume；首次也做无声 TTS 唤醒
   unlock(){
+    tryResume();
     if(unlocked) return;
     unlocked = true;
-    const a = ensureAC(); if(a && a.state === 'suspended') a.resume();
     try{
       if('speechSynthesis' in window){
         const u = new SpeechSynthesisUtterance(' ');
         u.volume = 0.001; u.lang = 'zh-CN';
         window.speechSynthesis.speak(u);
+        pickVoice();
       }
     }catch{}
-    // 短促无声占位（Safari）
     beep({freq:1, dur:0.001, gain:0.0001});
   },
   speak,

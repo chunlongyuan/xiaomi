@@ -38,12 +38,16 @@ function mount(){
   window.scrollTo({top:0, behavior:'instant'});
 }
 
-// iOS 音频 unlock：任何点击/触摸都尝试一次
+// iOS 音频 unlock：每次点击/触摸都尝试一次 resume（iOS 会周期性挂起 AudioContext）
 function bindUnlock(){
-  const once = () => { audio.unlock(); };
+  const cb = () => audio.unlock();
   ['pointerdown','touchstart','click'].forEach(ev =>
-    window.addEventListener(ev, once, { once:true, passive:true, capture:true })
+    document.addEventListener(ev, cb, { passive:true, capture:true })
   );
+  // 页面重回前台时也 resume
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden) audio.unlock();
+  });
 }
 bindUnlock();
 
