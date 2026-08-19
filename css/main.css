@@ -334,8 +334,8 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 .whack-tip{text-align:center;color:var(--ink-soft);font-weight:700;font-size:14px;margin-top:12px}
 
 .whack-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
-  max-width:420px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  max-width:520px;margin:0 auto;
 }
 .whack-hole{
   aspect-ratio:1;border:none;cursor:pointer;
@@ -352,21 +352,25 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 }
 .whack-hole:active{transform:translateY(2px)}
 .whack-hole .mole{
-  position:absolute;left:0;right:0;bottom:-110%;
-  font-size:88px;line-height:1;text-align:center;
-  transition:bottom .22s cubic-bezier(.5,1.7,.5,1);
-  filter:drop-shadow(0 6px 8px rgba(0,0,0,.55));
+  position:absolute;left:50%;top:50%;
+  transform: translate(-50%, 120%) scale(.3);
+  font-size: clamp(72px, 18vw, 130px);
+  line-height:1;text-align:center;
+  transition: transform .28s cubic-bezier(.5,1.7,.5,1);
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.55));
   pointer-events:none;
 }
-.whack-hole.up .mole{bottom:14%}
+.whack-hole.up .mole{
+  transform: translate(-50%, -50%) scale(1);
+}
 .whack-hole.bonk .mole{
   animation:squish .35s ease-out forwards;
 }
 @keyframes squish{
-  0%{ transform:scale(1) rotate(0); }
-  40%{ transform:scale(1.5,.6) rotate(-6deg); }
-  70%{ transform:scale(.8,1.1) rotate(4deg); opacity:.5; }
-  100%{ transform:scale(.3,.2) translateY(30px); opacity:0; }
+  0%   { transform: translate(-50%, -50%) scale(1) rotate(0); }
+  40%  { transform: translate(-50%, -30%) scale(1.5, .6) rotate(-6deg); }
+  70%  { transform: translate(-50%,  10%) scale(.8, 1.1) rotate(4deg); opacity:.5; }
+  100% { transform: translate(-50%,  60%) scale(.3, .2); opacity:0; }
 }
 .whack-hole.miss{ animation:mole-miss .24s; }
 @keyframes mole-miss{
@@ -387,7 +391,6 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   100%{ opacity:0; transform:translate(-50%, -70px) scale(1); }
 }
 @media (max-width: 480px){
-  .whack-hole .mole{font-size:72px}
   .wh-progress{font-size:24px}
 }
 
