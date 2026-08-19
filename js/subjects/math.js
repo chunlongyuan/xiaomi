@@ -103,12 +103,14 @@ function makeSub(max){
 }
 function finalize(a, op, b, ans, hintFn){
   const spread = Math.max(3, Math.min(15, Math.ceil(ans*0.15)));
+  const opWord = op === '+' ? '加' : '减';
   return {
     prompt:'',
     display:`<span>${a}</span><span class="op">${op}</span><span>${b}</span><span class="op">=</span><span class="qmark">?</span>`,
     choices: distractors(ans, spread).map(String),
     answer: String(ans),
-    speak: `${a} ${op==='+'?'加':'减'} ${b} 等于几？`,
+    speak: `${a} ${opWord} ${b} 等于几？`,
+    speakParts: [String(a), opWord, String(b), '等于几'],
     hint: hintFn(a, b, ans),
     kind: 'arith',
   };
@@ -124,6 +126,7 @@ function compareQ(max){
     choices: shuffle([a,b]).map(String),
     answer: String(bigger),
     speak: `${a} 和 ${b}，哪个大？`,
+    speakParts: [String(a), String(b), '哪个数字大'],
     hint: `<b>${bigger}</b> 大！数字越大表示数量越多。`,
     kind: 'compare',
   };
@@ -141,6 +144,7 @@ function countQ(){
     choices: shuffle([...opts]).map(String),
     answer: String(n),
     speak:`数一数，有几个${s.name}？`,
+    speakParts: [`数一数，有几个${s.name}`],
     hint: `一共有 <b>${n}</b> 个 ${s.name}。可以一个一个点着数：1、2、3…`,
     kind: 'count',
   };

@@ -30,6 +30,23 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache generated audio
+        uses: actions/cache@v4
+        with:
+          path: audio
+          key: audio-v1-${{ hashFiles('scripts/audio-phrases.json', 'scripts/gen-audio.py') }}
+
+      - name: Generate TTS audio (if not cached)
+        continue-on-error: true
+        run: |
+          pip install --quiet edge-tts
+          python scripts/gen-audio.py
+
       - name: Cache-bust static assets with commit SHA
         run: |
           node -e '

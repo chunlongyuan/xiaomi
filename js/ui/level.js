@@ -97,7 +97,11 @@ export function renderLevel(ctx){
   }
 
   function speakQuestion(q){
-    audio.speak(q.speak || q.prompt || '');
+    if(q.speakParts && q.speakParts.length){
+      audio.speakParts(q.speakParts);
+    } else {
+      audio.speak(q.speak || q.prompt || '');
+    }
   }
 
   function showHint(q){
