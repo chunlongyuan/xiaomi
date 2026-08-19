@@ -1,8 +1,9 @@
-// 语文题生成 —— 认字 / 拼音 / 看图选字
+// 语文题生成 —— 认字 / 拼音 / 看图选字，按分级筛选
 import { rand, shuffle, pick } from '../ui/common.js';
 
 const DATA_URL = new URL('../../data/chinese.json', import.meta.url);
 let DATA = null;
+
 async function ensureData(){
   if(DATA) return DATA;
   const res = await fetch(DATA_URL);
@@ -10,16 +11,43 @@ async function ensureData(){
   return DATA;
 }
 
-function pickTarget(hanzi, exclude){
-  // 从未用过的汉字里挑
-  const pool = exclude && exclude.size ? hanzi.filter(h => !exclude.has(h.char)) : hanzi;
-  return (pool.length ? pool : hanzi)[rand(0, (pool.length ? pool : hanzi).length-1)];
+let cache = null;
+export async function preloadChinese(){
+  cache = await ensureData();
+  return cache;
+}
+export function chineseTiers(){
+  return cache ? cache.tiers.slice() : [];
+}
+export function chineseStatsByTier(){
+  if(!cache) return {};
+  const m = {};
+  cache.tiers.forEach(t => {
+    m[t.id] = { total: cache.hanzi.filter(h => h.tier === t.id).length };
+  });
+  return m;
 }
 
-// 图 → 选字
-function pickHanziByEmojiQ(hanzi, exclude){
-  const target = pickTarget(hanzi, exclude);
-  const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
+// 按分级筛选可用字库；不指定或"all"时用全库
+function hanziByTier(tier){
+  if(!cache) return [];
+  if(!tier || tier === 'all') return cache.hanzi;
+  // 允许答题范围略宽：本级 + 上一级作为干扰项池
+  const order = ['basic', 'middle', 'advanced'];
+  const idx = order.indexOf(tier);
+  const allowed = idx >= 0 ? new Set(order.slice(0, idx+1)) : new Set([tier]);
+  const list = cache.hanzi.filter(h => allowed.has(h.tier));
+  return list.length ? list : cache.hanzi;
+}
+
+function pickTarget(pool, exclude){
+  const available = exclude && exclude.size ? pool.filter(h => !exclude.has(h.char)) : pool;
+  return (available.length ? available : pool)[rand(0, (available.length ? available : pool).length-1)];
+}
+
+function pickHanziByEmojiQ(pool, exclude){
+  const target = pickTarget(pool, exclude);
+  const others = pick(pool.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
     prompt:'哪个字表示这个？',
@@ -31,11 +59,9 @@ function pickHanziByEmojiQ(hanzi, exclude){
     target: target.char,
   };
 }
-
-// 字 → 选图
-function pickEmojiByHanziQ(hanzi, exclude){
-  const target = pickTarget(hanzi, exclude);
-  const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
+function pickEmojiByHanziQ(pool, exclude){
+  const target = pickTarget(pool, exclude);
+  const others = pick(pool.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
     prompt:`这是什么？`,
@@ -48,11 +74,9 @@ function pickEmojiByHanziQ(hanzi, exclude){
     target: target.char,
   };
 }
-
-// 拼音 → 选字
-function pinyinQ(hanzi, exclude){
-  const target = pickTarget(hanzi, exclude);
-  const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
+function pinyinQ(pool, exclude){
+  const target = pickTarget(pool, exclude);
+  const others = pick(pool.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
     prompt:`请找 “${target.pinyin}”`,
@@ -64,11 +88,9 @@ function pinyinQ(hanzi, exclude){
     target: target.char,
   };
 }
-
-// 听音选字
-function listenQ(hanzi, exclude){
-  const target = pickTarget(hanzi, exclude);
-  const others = pick(hanzi.filter(h=>h.char!==target.char), 3);
+function listenQ(pool, exclude){
+  const target = pickTarget(pool, exclude);
+  const others = pick(pool.filter(h=>h.char!==target.char), 3);
   const opts = shuffle([target, ...others]);
   return {
     prompt: '听一听，选出正确的字',
@@ -81,29 +103,20 @@ function listenQ(hanzi, exclude){
   };
 }
 
-// 同步版本 —— 需要先 preloadChinese()
-let cache = null;
-export async function preloadChinese(){
-  cache = await ensureData();
-  return cache;
-}
-
-// 关卡工厂（返回 Promise，level.js 会 await）
-export function makeChineseLevel(n=5){
-  // 因为 level.js 目前是同步，我们提供一个同步生成，让 preload 在 app 启动时做
+export function makeChineseLevel(n=5, tier='basic'){
   if(!cache){
-    // fallback: 尝试同步 XHR 也不理想 —— 走异步 Promise 结构
     console.warn('中文题库尚未加载完成');
     return [];
   }
+  const pool = hanziByTier(tier);
   const gens = [pickHanziByEmojiQ, pickEmojiByHanziQ, pinyinQ, listenQ];
   const qs = [];
-  const usedChars = new Set();          // 已考过的字不再重复
-  const kindCount = {};                 // 同一题型最多 2 次
+  const usedChars = new Set();
+  const kindCount = {};
   let attempts = 0;
   while(qs.length < n && attempts < n * 40){
     const g = gens[rand(0, gens.length-1)];
-    const q = g(cache.hanzi, usedChars);
+    const q = g(pool, usedChars);
     if(usedChars.has(q.target)){ attempts++; continue; }
     const k = q.kind || 'x';
     if((kindCount[k] || 0) >= 2 && attempts < n * 20){ attempts++; continue; }

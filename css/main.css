@@ -225,7 +225,8 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   min-height:100px;border-radius:22px;padding:14px 12px;
   display:flex;flex-direction:column;gap:2px;text-align:center;
 }
-.diff-btn .dn{font-size:24px;font-weight:900}
+.diff-btn .dt-emoji{font-size:44px;line-height:1;margin-bottom:2px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.15))}
+.diff-btn .dn{font-size:22px;font-weight:900}
 .diff-btn .ds{font-size:13px;opacity:.9;font-weight:700}
 .diff-btn .da{font-size:12px;opacity:.85;margin-top:4px;font-weight:700}
 

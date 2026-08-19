@@ -7,6 +7,7 @@ export function renderResult(ctx){
   const sticker = params.sticker;
   const subject = params.subject || 'math';
   const level = params.level;
+  const tier = params.tier;
 
   root.appendChild(topbar(ctx, { back:()=>go('home') }));
 
@@ -22,7 +23,7 @@ export function renderResult(ctx){
     </p>
     <div class="row">
       <button class="btn yellow" data-act="again">再来一关</button>
-      ${subject==='math' ? `<button class="btn blue" data-act="diff">换难度</button>` : ''}
+      <button class="btn blue" data-act="diff">换分级</button>
       <button class="btn green" data-act="switch">换个乐园</button>
       <button class="btn ghost" data-act="home">回首页</button>
     </div>
@@ -36,9 +37,9 @@ export function renderResult(ctx){
     const b = e.target.closest('[data-act]'); if(!b) return;
     audio.tap();
     const act = b.dataset.act;
-    if(act==='again') go('level',{ subject, level });
-    else if(act==='diff') go('difficulty',{ subject:'math' });
-    else if(act==='switch') go('level',{ subject: subject==='math' ? 'chinese' : 'math' });
+    if(act==='again') go('level',{ subject, level, tier });
+    else if(act==='diff') go('difficulty',{ subject });
+    else if(act==='switch') go('difficulty',{ subject: subject==='math' ? 'chinese' : 'math' });
     else go('home');
   });
 }

@@ -31,8 +31,8 @@ export function renderHome(ctx){
   root.appendChild(hero);
 
   const grid = el('div', 'grid');
-  grid.appendChild(subjectCard('math',     '数学乐园', '🧮', '选难度：10 / 20 / 50 / 100'));
-  grid.appendChild(subjectCard('chinese',  '语文乐园', '📚', '认字 · 拼音 · 看图'));
+  grid.appendChild(subjectCard('math',     '数学乐园', '🧮', '🌱 中班 · 🌿 大班 · 🌳 学前 · 🌲 一年级'));
+  grid.appendChild(subjectCard('chinese',  '语文乐园', '📚', '🌱 基础 · 🌿 进阶 · 🌳 挑战'));
   grid.appendChild(subjectCard('stickers', '贴纸收集', '🌟', `已收集 ${p.stickers.length} 枚`));
   grid.appendChild(subjectCard('stats',    '我的记录', '📊', `${p.levelsCompleted} 关 · 🔥${p.streak}`));
   root.appendChild(grid);
@@ -47,8 +47,7 @@ export function renderHome(ctx){
       audio.tap();
       if(id === 'stickers') go('stickers');
       else if(id === 'stats') go('stats');
-      else if(id === 'math') go('difficulty', { subject:'math' });
-      else go('level', { subject: id });   // 语文直接进关卡
+      else go('difficulty', { subject: id });   // 数学、语文都进分级页
     });
     return c;
   }

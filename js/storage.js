@@ -20,7 +20,7 @@ function newProfile(name, avatar){
     lastReward: null,           // 上次选的奖励游戏 id
     stats: {
       math:    { correct:0, wrong:0, byLevel:{ 10:{c:0,w:0}, 20:{c:0,w:0}, 50:{c:0,w:0}, 100:{c:0,w:0} } },
-      chinese: { correct:0, wrong:0 },
+      chinese: { correct:0, wrong:0, byTier:{ basic:{c:0,w:0}, middle:{c:0,w:0}, advanced:{c:0,w:0} } },
     },
     sessions: [],
   };
@@ -99,9 +99,14 @@ export const store = {
     if(s){
       s.correct += correct;
       s.wrong += (total - correct);
-      if(subject==='math' && level && s.byLevel[level]){
+      if(subject==='math' && level && s.byLevel && s.byLevel[level]){
         s.byLevel[level].c += correct;
         s.byLevel[level].w += (total - correct);
+      }
+      if(subject==='chinese' && level && s.byTier){
+        if(!s.byTier[level]) s.byTier[level] = {c:0,w:0};
+        s.byTier[level].c += correct;
+        s.byTier[level].w += (total - correct);
       }
     }
     persist();

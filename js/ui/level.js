@@ -7,17 +7,18 @@ export function renderLevel(ctx){
   const { root, params, go, store, audio } = ctx;
   const subject = params.subject || 'math';
   const level = params.level || null;
+  const tier = params.tier || 'basic';
 
   const qs = subject === 'math'
     ? makeMathLevel(5, level || 20)
-    : makeChineseLevel(5);
+    : makeChineseLevel(5, tier);
 
   let idx = 0;
   const results = [];
   let attempts = 0;
 
   root.appendChild(topbar(ctx, {
-    back: () => go(subject==='math' ? 'difficulty' : 'home', subject==='math'?{subject:'math'}:{}),
+    back: () => go('difficulty', { subject }),
   }));
 
   const panel = el('div', 'level');
@@ -37,14 +38,17 @@ export function renderLevel(ctx){
     panel.appendChild(p);
 
     // 副标题
-    const subtitle = el('div','level-sub', subject==='math' ? `🧮 ${level||'?'} 以内` : '📚 语文');
+    const tierName = { basic:'🌱 基础', middle:'🌿 进阶', advanced:'🌳 挑战' }[tier] || '';
+    const subtitle = el('div','level-sub', subject==='math'
+      ? `🧮 ${level||'?'} 以内`
+      : `📚 ${tierName}`);
     panel.appendChild(subtitle);
 
     if(idx >= qs.length){
       const correct = results.filter(r=>r==='right').length;
       store.addStars(correct);
-      store.finishLevel(subject, level, correct, qs.length);
-      go('reward', { subject, level, stars: correct, total: qs.length });
+      store.finishLevel(subject, subject==='math' ? level : tier, correct, qs.length);
+      go('reward', { subject, level, tier, stars: correct, total: qs.length });
       return;
     }
 

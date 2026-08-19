@@ -43,6 +43,12 @@ export function renderStats(ctx){
     <div class="stat-row"><span>已做</span><b>${cTotal} 题</b></div>
     <div class="stat-row"><span>正确率</span><b>${cAcc}%</b></div>
     <div class="stat-bar"><div class="fill" style="width:${cAcc}%;background:linear-gradient(90deg,#ff9ec4,#e5548a)"></div></div>
+    <div class="stat-sub">
+      ${[['basic','🌱 基础'],['middle','🌿 进阶'],['advanced','🌳 挑战']].map(([tid, label]) => {
+        const b = (s.chinese.byTier && s.chinese.byTier[tid]) || {c:0,w:0}; const t=b.c+b.w;
+        return `<div class="stat-mini"><b>${label}</b><span>${t?`${b.c}/${t}`:'—'}</span></div>`;
+      }).join('')}
+    </div>
 
     <h3 class="stat-h">🕘 最近 10 关</h3>
     <div class="session-list">
@@ -50,7 +56,8 @@ export function renderStats(ctx){
         const stars = x.correct, tot = x.total;
         const when = new Date(x.at);
         const wh = `${when.getMonth()+1}/${when.getDate()} ${String(when.getHours()).padStart(2,'0')}:${String(when.getMinutes()).padStart(2,'0')}`;
-        const sub = x.subject==='math' ? `数学 ${x.level||''}` : '语文';
+        const tierLbl = x.subject==='chinese' ? ({basic:'基础',middle:'进阶',advanced:'挑战'}[x.level] || '') : (x.level ? x.level+' 以内' : '');
+        const sub = x.subject==='math' ? `数学 ${tierLbl}` : `语文 ${tierLbl}`;
         return `<div class="session"><span class="s-lbl">${sub}</span><span class="s-sc">${starsRow(stars, tot)}</span><span class="s-tm">${wh}</span></div>`;
       }).join('') || '<div class="empty">还没有记录，快去玩一关吧！</div>'}
     </div>
