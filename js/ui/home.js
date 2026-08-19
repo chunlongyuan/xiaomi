@@ -1,21 +1,40 @@
-import { el, topbar } from './common.js';
+import { el, topbar, starsRow } from './common.js';
+import { store } from '../storage.js';
 
 export function renderHome(ctx){
-  const { root, go, store, audio } = ctx;
+  const { root, go, audio } = ctx;
 
-  root.appendChild(topbar(store));
+  // 没档案 → 强制去建一个
+  if(!store.hasProfile){
+    go('profiles', { forceCreate:true });
+    return;
+  }
+
+  root.appendChild(topbar(ctx, { showStars:true }));
+
+  const p = store.current;
+  const nextMilestone = Math.ceil((p.stars+1)/10)*10;
 
   const hero = el('div', 'hero', `
-    <div style="font-size:96px;line-height:1;filter:drop-shadow(0 12px 16px rgba(0,0,0,.2))">🦁🐻🐼</div>
-    <h1>小米学习乐园</h1>
-    <p class="sub">选一个乐园开始今天的探险吧！</p>
+    <div class="hero-avatar">${p.avatar}</div>
+    <h1>你好，${escapeHtml(p.name)}！</h1>
+    <p class="sub">今天想学什么呢？</p>
+    <div class="star-track">
+      <div class="star-track-label">
+        <span>⭐ ${p.stars} 颗</span>
+        <span class="tiny">下一个目标 ${nextMilestone}</span>
+      </div>
+      <div class="star-bar"><div class="fill" style="width:${Math.min(100, (p.stars % 10) * 10)}%"></div></div>
+      <div class="stars-mini">${starsRow(p.stars % 10, 10)}</div>
+    </div>
   `);
   root.appendChild(hero);
 
   const grid = el('div', 'grid');
-  grid.appendChild(subjectCard('math',    '数学乐园', '🧮', '加减、数数、比大小'));
-  grid.appendChild(subjectCard('chinese', '语文乐园', '📚', '认字、拼音、词语'));
-  grid.appendChild(subjectCard('stickers','贴纸收集', '🌟', '看看你的宝藏收藏'));
+  grid.appendChild(subjectCard('math',     '数学乐园', '🧮', '选难度：10 / 20 / 50 / 100'));
+  grid.appendChild(subjectCard('chinese',  '语文乐园', '📚', '认字 · 拼音 · 看图'));
+  grid.appendChild(subjectCard('stickers', '贴纸收集', '🌟', `已收集 ${p.stickers.length} 枚`));
+  grid.appendChild(subjectCard('stats',    '我的记录', '📊', `${p.levelsCompleted} 关 · 🔥${p.streak}`));
   root.appendChild(grid);
 
   function subjectCard(id, title, emoji, desc){
@@ -27,8 +46,12 @@ export function renderHome(ctx){
     c.addEventListener('click', () => {
       audio.tap();
       if(id === 'stickers') go('stickers');
-      else go('level', { subject:id });
+      else if(id === 'stats') go('stats');
+      else if(id === 'math') go('difficulty', { subject:'math' });
+      else go('level', { subject: id });   // 语文直接进关卡
     });
     return c;
   }
 }
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }

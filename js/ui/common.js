@@ -1,4 +1,6 @@
-// 通用 DOM 工具
+// 通用 DOM 工具 + topbar
+import { store } from '../storage.js';
+
 export function el(tag, cls, html){
   const n = document.createElement(tag);
   if(cls) n.className = cls;
@@ -6,15 +8,60 @@ export function el(tag, cls, html){
   return n;
 }
 
-export function topbar(store){
-  const bar = el('div', 'topbar', `
-    <div class="brand"><span class="logo">🦁</span>小米学习</div>
-    <div>
-      <span class="stars-pill"><span class="s">⭐</span><span>${store.stars}</span></span>
-      ${store.streak>0 ? `<span class="streak-pill">🔥 连续 ${store.streak} 天</span>` : ''}
-    </div>
-  `);
+// 紧凑 topbar：左档案/中标题(可选)/右星星+声音
+// 参数 opts: { back:()=>go(...), title, showStars:true }
+export function topbar(ctx, opts={}){
+  const { go, audio } = ctx;
+  const p = store.current;
+  const stars = store.stars;
+  const streak = store.streak;
+  const soundOn = store.soundOn;
+
+  const bar = el('div', 'topbar');
+
+  // 左边
+  const left = el('div', 'tb-left');
+  if(opts.back){
+    const back = el('button','tb-btn back', '← 返回');
+    back.addEventListener('click', ()=>{ audio.tap(); opts.back(); });
+    left.appendChild(back);
+  }
+  if(p){
+    const chip = el('button','profile-chip', `<span class="av">${p.avatar}</span><span class="nm">${escapeHtml(p.name)}</span>`);
+    chip.title = '切换小朋友';
+    chip.addEventListener('click', ()=>{ audio.tap(); go('profiles'); });
+    left.appendChild(chip);
+  }
+  bar.appendChild(left);
+
+  // 右边
+  const right = el('div','tb-right');
+  const sound = el('button','tb-btn round', soundOn?'🔊':'🔇');
+  sound.title = soundOn ? '点一下静音' : '点一下开声音';
+  sound.addEventListener('click', ()=>{
+    store.setSound(!store.soundOn);
+    audio.tap();
+    sound.textContent = store.soundOn ? '🔊' : '🔇';
+  });
+  right.appendChild(sound);
+
+  if(opts.showStars !== false && p){
+    const s = el('div','stars-pill', `<span class="s">⭐</span><b>${stars}</b>`);
+    right.appendChild(s);
+    if(streak>0){
+      const k = el('div','streak-pill', `🔥${streak}`);
+      right.appendChild(k);
+    }
+  }
+  bar.appendChild(right);
   return bar;
+}
+
+// 展示 5 星条：n 亮 out of total
+export function starsRow(n, total=5){
+  return `<span class="stars">${
+    Array(total).fill(0).map((_,i)=> i<n?'<span class="g">⭐</span>':'<span class="o">☆</span>').join('')
+  }</span>`;
 }
 
 export function toast(text, ms=1400){
@@ -25,21 +72,20 @@ export function toast(text, ms=1400){
   toast._t = setTimeout(()=>t.classList.remove('show'), ms);
 }
 
-export function confetti(ms=1800){
+export function confetti(ms=1600, count=60){
   const wrap = el('div', 'confetti');
   document.body.appendChild(wrap);
   const colors = ['#ff7aa7','#ffd35a','#7fd88a','#6dc9ff','#b18cff','#ff9a55'];
-  const N = 80;
-  for(let i=0;i<N;i++){
+  for(let i=0;i<count;i++){
     const c = el('i');
     c.style.background = colors[i%colors.length];
     c.style.left = Math.random()*100 + 'vw';
-    c.style.animationDuration = (1.6 + Math.random()*1.4) + 's';
-    c.style.animationDelay = (Math.random()*.3) + 's';
+    c.style.animationDuration = (1.4 + Math.random()*1.4) + 's';
+    c.style.animationDelay = (Math.random()*.2) + 's';
     c.style.transform = `rotate(${Math.random()*360}deg)`;
     wrap.appendChild(c);
   }
-  setTimeout(()=>wrap.remove(), ms+300);
+  setTimeout(()=>wrap.remove(), ms+400);
 }
 
 export function burst(emoji='🎉'){
@@ -47,6 +93,9 @@ export function burst(emoji='🎉'){
   document.body.appendChild(wrap);
   setTimeout(()=>wrap.remove(), 900);
 }
+
+const PRAISE = ['太棒了！','答对啦！','真聪明！','厉害！','了不起！','你真棒！','太厉害了！','666！'];
+export function praise(){ return PRAISE[Math.floor(Math.random()*PRAISE.length)]; }
 
 export function shuffle(arr){
   const a = arr.slice();
@@ -56,11 +105,9 @@ export function shuffle(arr){
   }
   return a;
 }
+export function pick(arr, n){ return shuffle(arr).slice(0, n); }
+export function rand(lo, hi){ return Math.floor(Math.random()*(hi-lo+1))+lo; }
 
-export function pick(arr, n){
-  return shuffle(arr).slice(0, n);
-}
-
-export function rand(lo, hi){
-  return Math.floor(Math.random()*(hi-lo+1))+lo;
+export function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }

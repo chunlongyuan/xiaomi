@@ -1,18 +1,24 @@
-// 通用关卡组件 —— 数学 / 语文共用
-import { el, topbar, toast } from './common.js';
+// 通用关卡组件
+import { el, topbar, toast, burst, confetti, praise } from './common.js';
 import { makeMathLevel } from '../subjects/math.js';
 import { makeChineseLevel } from '../subjects/chinese.js';
 
 export function renderLevel(ctx){
   const { root, params, go, store, audio } = ctx;
   const subject = params.subject || 'math';
+  const level = params.level || null;
 
-  const qs = subject === 'math' ? makeMathLevel(5) : makeChineseLevel(5);
+  const qs = subject === 'math'
+    ? makeMathLevel(5, level || 20)
+    : makeChineseLevel(5);
+
   let idx = 0;
-  const results = [];         // 每题：'right' | 'wrong'
-  let attempts = 0;           // 本题错误次数
+  const results = [];
+  let attempts = 0;
 
-  root.appendChild(topbar(store));
+  root.appendChild(topbar(ctx, {
+    back: () => go(subject==='math' ? 'difficulty' : 'home', subject==='math'?{subject:'math'}:{}),
+  }));
 
   const panel = el('div', 'level');
   root.appendChild(panel);
@@ -21,36 +27,34 @@ export function renderLevel(ctx){
 
   function render(){
     panel.innerHTML = '';
+
     // 进度点
     const p = el('div','progress');
     qs.forEach((_,i)=>{
-      const dot = el('span', 'dot' + (
-        i<idx ? ' ' + (results[i] || 'done')
-        : i===idx ? ' current'
-        : ''
-      ));
-      p.appendChild(dot);
+      const cls = i<idx ? (results[i]||'done') : (i===idx ? 'current' : '');
+      p.appendChild(el('span', 'dot' + (cls?' '+cls:'')));
     });
     panel.appendChild(p);
 
+    // 副标题
+    const subtitle = el('div','level-sub', subject==='math' ? `🧮 ${level||'?'} 以内` : '📚 语文');
+    panel.appendChild(subtitle);
+
     if(idx >= qs.length){
-      // 完成 → 去奖励
-      const stars = results.filter(r=>r==='right').length;
-      store.addStars(stars);
-      store.finishLevel();
-      go('reward', { subject, stars, total: qs.length });
+      const correct = results.filter(r=>r==='right').length;
+      store.addStars(correct);
+      store.finishLevel(subject, level, correct, qs.length);
+      go('reward', { subject, level, stars: correct, total: qs.length });
       return;
     }
 
     const q = qs[idx];
 
-    // 题面
     const question = el('div', 'question');
     if(q.hanzi){
-      // 语文题：显示大字 + 拼音 + 提示
       question.innerHTML = `
         ${q.prompt ? `<div class="prompt">${q.prompt}</div>` : ''}
-        ${q.hanzi ? `<div class="hanzi">${q.hanzi}</div>` : ''}
+        <div class="hanzi">${q.hanzi}</div>
         ${q.pinyin ? `<div class="pinyin">${q.pinyin}</div>` : ''}
       `;
     } else {
@@ -61,12 +65,18 @@ export function renderLevel(ctx){
     }
     panel.appendChild(question);
 
-    // 工具条：朗读题目
+    // 工具条
     const tools = el('div', 'tools');
     const speakBtn = el('button','iconbtn','🔊');
     speakBtn.title = '再读一次';
-    speakBtn.addEventListener('click', ()=>{ audio.tap(); speakQuestion(q); });
+    speakBtn.addEventListener('click', ()=>{ audio.tap(); audio.unlock(); speakQuestion(q); });
     tools.appendChild(speakBtn);
+    if(q.hint){
+      const hintBtn = el('button','iconbtn','💡');
+      hintBtn.title = '看看提示';
+      hintBtn.addEventListener('click', ()=>{ audio.tap(); showHint(q); });
+      tools.appendChild(hintBtn);
+    }
     panel.appendChild(tools);
 
     // 选项
@@ -77,12 +87,12 @@ export function renderLevel(ctx){
       const b = el('button','choice');
       b.innerHTML = typeof c === 'string' ? label
         : `<div>${label}</div><div class="cap">${value}</div>`;
+      b.dataset.value = value;
       b.addEventListener('click', ()=> answer(b, value, q));
       choices.appendChild(b);
     });
     panel.appendChild(choices);
 
-    // 自动读题
     setTimeout(()=> speakQuestion(q), 200);
   }
 
@@ -90,35 +100,61 @@ export function renderLevel(ctx){
     audio.speak(q.speak || q.prompt || '');
   }
 
+  function showHint(q){
+    if(!q.hint) return;
+    const overlay = el('div','hint-overlay');
+    overlay.innerHTML = `
+      <div class="hint-card">
+        <div class="ht">💡 小提示</div>
+        <div class="hb">${q.hint}</div>
+        <button class="btn yellow" data-close>知道啦</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    const close = ()=> overlay.remove();
+    overlay.querySelector('[data-close]').addEventListener('click', ()=>{ audio.tap(); close(); });
+    overlay.addEventListener('click', e => { if(e.target===overlay) close(); });
+  }
+
   function answer(btn, value, q){
     if(btn.disabled) return;
     if(String(value) === String(q.answer)){
       btn.classList.add('correct');
       audio.right();
-      btn.disabled = true;
-      // 禁用其他
       [...btn.parentNode.children].forEach(c=>c.disabled = true);
       results[idx] = 'right';
-      setTimeout(()=>{ idx++; attempts = 0; render(); }, 750);
+      // 大特效
+      burst(pickCelebration());
+      confetti(1000, 40);
+      toast(praise(), 900);
+      setTimeout(()=>{ idx++; attempts = 0; render(); }, 900);
     } else {
       btn.classList.add('wrong');
       audio.wrong();
       btn.disabled = true;
       attempts++;
       if(attempts >= 3){
-        toast('正确答案是 ' + (typeof q.answer==='string'? q.answer : q.answer), 1600);
-        // 展示正确答案
+        // 展示正确 + 讲解
         [...btn.parentNode.children].forEach(c => {
           c.disabled = true;
-          const v = c.querySelector('.cap')?.textContent || c.textContent;
-          if(String(v).trim() === String(q.answer).trim()) c.classList.add('correct');
+          if(String(c.dataset.value).trim() === String(q.answer).trim()) c.classList.add('correct');
         });
         results[idx] = 'wrong';
-        setTimeout(()=>{ idx++; attempts = 0; render(); }, 1500);
+        if(q.hint){
+          showHint(q);
+          setTimeout(()=>{ document.querySelector('.hint-overlay')?.remove(); idx++; attempts=0; render(); }, 3500);
+        } else {
+          toast('正确答案是 ' + q.answer, 1500);
+          setTimeout(()=>{ idx++; attempts = 0; render(); }, 1500);
+        }
       } else {
         toast('再想想～', 900);
         setTimeout(()=> btn.classList.remove('wrong'), 500);
       }
     }
   }
+}
+
+function pickCelebration(){
+  const arr = ['🎉','⭐','🌟','🎊','🏆','💯','👏','🥳','✨','🚀'];
+  return arr[Math.floor(Math.random()*arr.length)];
 }
