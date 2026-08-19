@@ -456,6 +456,18 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   50%  { transform: translate(calc(-50% + var(--sway)), -240px) rotate(6deg); }
   100% { transform: translate(-50%, -520px) rotate(-4deg); opacity: 0; }
 }
+.balloon-item.star-bonus{
+  filter: drop-shadow(0 0 12px #ffd35a) drop-shadow(0 6px 10px rgba(0,0,0,.25));
+  animation: float-up linear forwards, star-glow 1s ease-in-out infinite;
+}
+@keyframes star-glow{
+  0%,100%{ text-shadow: 0 0 10px #ffd35a; }
+  50%    { text-shadow: 0 0 24px #ffd35a, 0 0 8px #fff; }
+}
+.catch-fruit.star-bonus{
+  filter: drop-shadow(0 0 12px #ffd35a) drop-shadow(0 4px 6px rgba(0,0,0,.25));
+  animation: fruit-fall linear forwards, star-glow 1s ease-in-out infinite;
+}
 .balloon-item.popped{ animation: balloon-pop .35s ease-out forwards; }
 @keyframes balloon-pop{
   0%   { transform: translate(-50%, 0) scale(1); opacity:1; }

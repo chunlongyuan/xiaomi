@@ -35,30 +35,37 @@ export function playBalloon(ctx, onDone){
 
   function spawn(){
     if(stopped) return;
-    const emoji = COLORS[rand(0, COLORS.length-1)];
-    const b = el('button','balloon-item', emoji);
-    // 起始 x 位置（20% 到 80%）避免贴边
+    const isStar = Math.random() < 0.18;                // 18% 概率出金色奖励星
+    const emoji = isStar ? '⭐' : COLORS[rand(0, COLORS.length-1)];
+    const b = el('button','balloon-item' + (isStar?' star-bonus':''), emoji);
     b.style.left = (10 + Math.random()*80) + '%';
-    // 飘飞时长（越到后面越快）
     const dur = 4200 - Math.min(hits * 200, 1400) + Math.random()*800;
     b.style.animationDuration = dur + 'ms';
-    // 轻微左右摆动幅度
     b.style.setProperty('--sway', ((Math.random()*40 - 20) | 0) + 'px');
     arena.appendChild(b);
     spawned.push(b);
     b.addEventListener('animationend', () => b.remove(), { once:true });
-    b.addEventListener('click', () => pop(b));
+    b.addEventListener('click', () => pop(b, isStar));
 
     const nextIn = 700 - Math.min(hits*60, 400) + Math.random()*400;
     setTimeout(spawn, nextIn);
   }
 
-  function pop(b){
+  function pop(b, isStar){
     if(stopped || b.classList.contains('popped')) return;
     b.classList.add('popped');
-    hits += 1;
-    audio.pop();
-    audio.right();
+    if(isStar){
+      hits += 2;                                        // 星星值 2 分
+      audio.fanfare();
+      panel.querySelector('.whack-tip').textContent = '🌟 星星奖励 +2！';
+      setTimeout(()=>{
+        if(!stopped) panel.querySelector('.whack-tip').textContent = '戳中飘起来的气球！';
+      }, 1200);
+    } else {
+      hits += 1;
+      audio.pop(); audio.right();
+    }
+    if(hits > GOAL) hits = GOAL;
     renderProgress();
     panel.querySelector('.hit').textContent = String(hits);
     setTimeout(()=> b.remove(), 350);
@@ -66,7 +73,6 @@ export function playBalloon(ctx, onDone){
       stopped = true;
       audio.fanfare();
       panel.querySelector('.whack-tip').textContent = '🏆 完成任务！';
-      // 清屏残留气球
       spawned.forEach(x => { try{ x.remove(); }catch{} });
       setTimeout(()=> onDone(true), 700);
     }

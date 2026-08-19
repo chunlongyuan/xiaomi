@@ -47,22 +47,29 @@ export function playCatch(ctx, onDone){
 
   function spawn(){
     if(stopped) return;
-    const emoji = FRUITS[rand(0, FRUITS.length-1)];
+    const isStar = Math.random() < 0.18;
+    const emoji = isStar ? '⭐' : FRUITS[rand(0, FRUITS.length-1)];
     const startX = 10 + Math.random()*80;
-    const f = el('div','catch-fruit', emoji);
+    const f = el('div','catch-fruit' + (isStar?' star-bonus':''), emoji);
     f.style.left = startX + '%';
-    // 下落时长（越到后面越快）
     const dur = 3400 - Math.min(caught*180, 1200) + Math.random()*600;
     f.style.animationDuration = dur + 'ms';
     arena.appendChild(f);
-    // 到达底部时判断是否落入篮子
     setTimeout(() => {
       if(stopped) return;
       if(Math.abs(startX - basketX) < 10){
-        // 命中
-        caught += 1;
-        audio.pop();
-        audio.right();
+        if(isStar){
+          caught += 2;
+          audio.fanfare();
+          panel.querySelector('.whack-tip').textContent = '🌟 星星奖励 +2！';
+          setTimeout(()=>{
+            if(!stopped) panel.querySelector('.whack-tip').textContent = '点击/拖动移动篮子，接住掉下来的水果';
+          }, 1200);
+        } else {
+          caught += 1;
+          audio.pop(); audio.right();
+        }
+        if(caught > GOAL) caught = GOAL;
         renderProgress();
         panel.querySelector('.hit').textContent = String(caught);
         basket.classList.add('bounce');
