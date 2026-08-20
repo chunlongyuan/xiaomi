@@ -172,6 +172,67 @@ function classifyQ(){
   };
 }
 
+/* ---------- 量词（汉语特有难点，部编版一上重点）---------- */
+
+function liangciByTier(tier){
+  if(!cache || !cache.liangci) return [];
+  const order = cache.tiers.map(t => t.id);
+  const idx = order.indexOf(tier);
+  const allowed = idx >= 0 ? new Set(order.slice(0, idx+1)) : new Set([tier]);
+  const list = cache.liangci.filter(w => allowed.has(w.tier));
+  return list.length >= 4 ? list : (cache.liangci || []);
+}
+
+// 一 ? 苹果 —— 选正确量词
+function liangciQ(pool, exclude){
+  if(!pool || pool.length < 4) return null;
+  const avail = exclude && exclude.size ? pool.filter(x => !exclude.has('lc-'+x.noun)) : pool;
+  const target = (avail.length ? avail : pool)[rand(0, (avail.length?avail:pool).length-1)];
+  // 干扰项：其他不同的量词
+  const otherCls = shuffle([...new Set(pool.map(x=>x.cls).filter(c => c !== target.cls))]).slice(0,3);
+  const opts = shuffle([target.cls, ...otherCls]);
+  return {
+    prompt: `一 <b>?</b> ${target.noun}`,
+    display: `<div style="font-size:110px">${target.emoji}</div>`,
+    choices: opts.map(o => ({ label:o, value:o })),
+    answer: target.cls,
+    speak: `一，什么，${target.noun}`,
+    hint: `<b>一${target.cls}${target.noun}</b> ${target.emoji}<br><span class="muted">量词要和东西配对哦</span>`,
+    kind: 'liangci',
+    target: 'lc-' + target.noun,
+  };
+}
+
+/* ---------- 笔画数（部编版写字表核心）---------- */
+
+function bihuaByTier(tier){
+  if(!cache || !cache.bihua) return [];
+  const order = cache.tiers.map(t => t.id);
+  const idx = order.indexOf(tier);
+  const allowed = idx >= 0 ? new Set(order.slice(0, idx+1)) : new Set([tier]);
+  const list = cache.bihua.filter(w => allowed.has(w.tier));
+  return list.length >= 3 ? list : (cache.bihua || []);
+}
+
+function bihuaQ(pool, exclude){
+  if(!pool || pool.length < 3) return null;
+  const avail = exclude && exclude.size ? pool.filter(x => !exclude.has('bh-'+x.char)) : pool;
+  const target = (avail.length ? avail : pool)[rand(0, (avail.length?avail:pool).length-1)];
+  const n = target.strokes;
+  const opts = new Set([n]);
+  while(opts.size < 4){ const d = n + rand(-2, 3); if(d >= 1 && d !== n) opts.add(d); }
+  return {
+    prompt: `“<b>${target.char}</b>” 有几笔？`,
+    display: `<div class="hanzi">${target.char}</div>`,
+    choices: shuffle([...opts]).map(String),
+    answer: String(n),
+    speak: `${target.char}，有几笔`,
+    hint: `<b>${target.char}</b> 一共 <b>${n}</b> 笔。<br><span class="muted">一笔一笔慢慢数～</span>`,
+    kind: 'bihua',
+    target: 'bh-' + target.char,
+  };
+}
+
 /* ---------- 词组题（随文识字）---------- */
 
 function pickWord(pool, excludeTexts){
@@ -228,12 +289,16 @@ export function makeChineseLevel(n=5, tier='sprout'){
     { fn: wordToImageQ,       pool: wordPool,  weight: 2 },   // 词组题权重更高
     { fn: imageToWordQ,       pool: wordPool,  weight: 2 },
   ];
-  // 反义词从 leaf 起有；归类从 tree 起有
+  // 分级解锁进阶题型
+  const lcPool = liangciByTier(tier);
+  const bhPool = bihuaByTier(tier);
   if(tier !== 'sprout'){
-    gens.push({ fn: (pool, ex)=>antonymQ(hanziPool), pool: hanziPool, weight: 1 });
+    gens.push({ fn: (pool, ex)=>antonymQ(hanziPool),  pool: hanziPool, weight: 1 });
+    gens.push({ fn: (pool, ex)=>liangciQ(lcPool, ex), pool: lcPool,    weight: 2 });  // 量词是难点，权重高
   }
   if(tier === 'tree' || tier === 'pine'){
-    gens.push({ fn: (pool, ex)=>classifyQ(), pool: [1,2,3,4,5], weight: 1 });
+    gens.push({ fn: (pool, ex)=>classifyQ(),          pool: [1,2,3,4], weight: 1 });
+    gens.push({ fn: (pool, ex)=>bihuaQ(bhPool, ex),   pool: bhPool,    weight: 1 });
   }
   // 展开权重
   const weightedGens = gens.flatMap(g => Array(g.weight).fill(g));
@@ -244,9 +309,9 @@ export function makeChineseLevel(n=5, tier='sprout'){
   let attempts = 0;
   while(qs.length < n && attempts < n * 40){
     const g = weightedGens[rand(0, weightedGens.length-1)];
-    if(!g.pool || g.pool.length < 4){ attempts++; continue; }
+    if(!g.pool || g.pool.length < 3){ attempts++; continue; }
     const q = g.fn(g.pool, usedTargets);
-    if(usedTargets.has(q.target)){ attempts++; continue; }
+    if(!q || usedTargets.has(q.target)){ attempts++; continue; }   // 生成器可能返回 null
     const k = q.kind || 'x';
     if((kindCount[k] || 0) >= 2 && attempts < n * 20){ attempts++; continue; }
     usedTargets.add(q.target);

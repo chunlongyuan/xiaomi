@@ -312,6 +312,75 @@ function ordinalQ(){
   };
 }
 
+/* ---------- 时间认知（部编版一上《认识钟表》单元）---------- */
+
+function clockQ(halfHour){
+  const h = rand(1, 12);
+  const isHalf = halfHour && Math.random() < 0.5;
+  const m = isHalf ? 30 : 0;
+  const label = isHalf ? `${h} 点半` : `${h} 点`;
+  // 时针角度：整点指向 h；半点在 h 和 h+1 中间
+  const hourAngle = (h % 12) * 30 + (isHalf ? 15 : 0);
+  const minAngle  = isHalf ? 180 : 0;
+  const clock = `
+    <svg viewBox="0 0 200 200" width="180" height="180" style="filter:drop-shadow(0 6px 10px rgba(0,0,0,.15))">
+      <circle cx="100" cy="100" r="92" fill="#fffdf7" stroke="#e8b634" stroke-width="8"/>
+      ${Array.from({length:12},(_,i)=>{
+        const a=(i*30-90)*Math.PI/180;
+        return `<text x="${100+72*Math.cos(a)}" y="${100+72*Math.sin(a)+7}" font-size="20" font-weight="800" text-anchor="middle" fill="#3a2c1f">${i===0?12:i}</text>`;
+      }).join('')}
+      <line x1="100" y1="100" x2="100" y2="48" stroke="#e5548a" stroke-width="9" stroke-linecap="round" transform="rotate(${hourAngle} 100 100)"/>
+      <line x1="100" y1="100" x2="100" y2="26" stroke="#3ca4e8" stroke-width="6" stroke-linecap="round" transform="rotate(${minAngle} 100 100)"/>
+      <circle cx="100" cy="100" r="7" fill="#3a2c1f"/>
+    </svg>`;
+  // 干扰项
+  const opts = new Set([label]);
+  while(opts.size < 4){
+    const dh = rand(1, 12);
+    const dHalf = Math.random() < 0.5;
+    const l = dHalf ? `${dh} 点半` : `${dh} 点`;
+    if(l !== label) opts.add(l);
+  }
+  return {
+    prompt: '现在是几点？',
+    display: `<div style="width:100%;display:flex;justify-content:center">${clock}</div>`,
+    choices: shuffle([...opts]).map(o => ({ label:o, value:o })),
+    answer: label,
+    speak: '现在是几点',
+    hint: `<b>粉色短针</b>是时针，<b>蓝色长针</b>是分针。<br>分针指 12 就是整点，指 6 就是半点。<br>现在是 <b>${label}</b>。`,
+    kind: 'clock',
+  };
+}
+
+/* ---------- 人民币认知（部编版一下《认识人民币》）---------- */
+
+const MONEY = [
+  { v:1,   label:'1 元',  emoji:'🪙' },
+  { v:2,   label:'2 元',  emoji:'💴' },
+  { v:5,   label:'5 元',  emoji:'💵' },
+  { v:10,  label:'10 元', emoji:'💶' },
+  { v:20,  label:'20 元', emoji:'💷' },
+  { v:50,  label:'50 元', emoji:'💸' },
+];
+function moneyQ(){
+  // 两张钱加起来多少？
+  const a = MONEY[rand(0, 3)];
+  const b = MONEY[rand(0, 3)];
+  const total = a.v + b.v;
+  const opts = new Set([total]);
+  while(opts.size < 4){ const d = total + rand(-5, 8); if(d > 0 && d !== total) opts.add(d); }
+  return {
+    prompt: '一共有多少钱？',
+    display: `<div style="font-size:64px">${a.emoji} ${b.emoji}</div>
+              <div style="font-size:28px;color:var(--ink-soft);font-weight:800;width:100%;margin-top:6px">${a.label} ＋ ${b.label}</div>`,
+    choices: shuffle([...opts]).map(x => ({ label:`${x} 元`, value:String(x) })),
+    answer: String(total),
+    speak: '一共有多少钱',
+    hint: `<b>${a.v} + ${b.v} = ${total}</b><br>一共 <b>${total} 元</b>。`,
+    kind: 'money',
+  };
+}
+
 /* ---------- 关卡组合 ---------- */
 
 function qKey(q){
@@ -344,30 +413,37 @@ export function makeMathLevel(n=5, level=20){
       ()=>wordQ(10),
     );
   } else if(level <= 20){
-    // 20 以内（大班）：凑十/破十主打 + 相邻数 + 应用题
+    // 20 以内（大班）：凑十/破十主打 + 相邻数 + 认识钟表(整点)
     pool.push(
       ()=>makeAdd(20), ()=>makeAdd(20), ()=>makeAdd(20),
       ()=>makeSub(20), ()=>makeSub(20), ()=>makeSub(20),
       ()=>compareQ(20),
       ()=>neighborQ(20),
+      ()=>clockQ(false),                       // 整点
       ()=>patternQ(20),
       ()=>fillQ(20),
       ()=>wordQ(20),
     );
   } else if(level <= 50){
+    // 50 以内（幼小衔接）：两位数运算 + 钟表(半点) + 人民币
     pool.push(
       ()=>makeAdd(50), ()=>makeAdd(50), ()=>makeAdd(50),
       ()=>makeSub(50), ()=>makeSub(50), ()=>makeSub(50),
       ()=>neighborQ(50),
+      ()=>clockQ(true),                        // 整点 + 半点
+      moneyQ,
       ()=>patternQ(50),
       ()=>fillQ(50),
       ()=>wordQ(50),
     );
   } else {
+    // 100 以内（一年级）：进退位 + 钟表 + 人民币
     pool.push(
       ()=>makeAdd(100), ()=>makeAdd(100), ()=>makeAdd(100),
       ()=>makeSub(100), ()=>makeSub(100), ()=>makeSub(100),
       ()=>neighborQ(100),
+      ()=>clockQ(true),
+      moneyQ, moneyQ,
       ()=>patternQ(100),
       ()=>fillQ(100),
       ()=>wordQ(100),

@@ -42,7 +42,7 @@ export function renderLevel(ctx){
 
     // 副标题
     const zhTierName = { sprout:'🌱 启蒙', leaf:'🌿 认字入门', tree:'🌳 拓展识字', pine:'🌲 幼小衔接' }[tier];
-    const enTierName = { letters:'🅰️ 字母', words:'🐱 单词', phrases:'👋 短语' }[tier];
+    const enTierName = { letters:'🅰️ 字母', phonics:'🔠 自然拼读', words:'🐱 单词', phrases:'👋 短语' }[tier];
     const subtitle = el('div','level-sub',
       subject==='math'    ? `🧮 ${level||'?'} 以内` :
       subject==='english' ? `🔤 ${enTierName||''}` :

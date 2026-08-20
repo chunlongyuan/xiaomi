@@ -3,31 +3,120 @@
   "rate": "+8%",
   "pitch": "+0Hz",
   "phrases": [
-    "0","1","2","3","4","5","6","7","8","9","10",
-    "11","12","13","14","15","16","17","18","19","20",
-    "21","22","23","24","25","26","27","28","29","30",
-    "31","32","33","34","35","36","37","38","39","40",
-    "41","42","43","44","45","46","47","48","49","50",
-    "51","52","53","54","55","56","57","58","59","60",
-    "61","62","63","64","65","66","67","68","69","70",
-    "71","72","73","74","75","76","77","78","79","80",
-    "81","82","83","84","85","86","87","88","89","90",
-    "91","92","93","94","95","96","97","98","99","100",
-
-    "加", "减", "等于几",
-
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51",
+    "52",
+    "53",
+    "54",
+    "55",
+    "56",
+    "57",
+    "58",
+    "59",
+    "60",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "66",
+    "67",
+    "68",
+    "69",
+    "70",
+    "71",
+    "72",
+    "73",
+    "74",
+    "75",
+    "76",
+    "77",
+    "78",
+    "79",
+    "80",
+    "81",
+    "82",
+    "83",
+    "84",
+    "85",
+    "86",
+    "87",
+    "88",
+    "89",
+    "90",
+    "91",
+    "92",
+    "93",
+    "94",
+    "95",
+    "96",
+    "97",
+    "98",
+    "99",
+    "100",
+    "加",
+    "减",
+    "等于几",
     "哪个数字大",
     "数一数，有几个圆形",
     "数一数，有几个方块",
     "数一数，有几个三角形",
     "数一数，有几个星星",
     "数一数，有几个心形",
-
     "这是什么",
     "哪个字表示这个",
     "请找出下面这个音",
     "听好了，请选出正确的字",
-
     "太棒了！",
     "答对啦！",
     "真聪明！",
@@ -35,92 +124,337 @@
     "了不起！",
     "你真棒！",
     "太厉害了！",
-
     "打中啦！",
     "真准！",
     "好眼力！",
-
     "你好，我们开始玩吧！",
     "欢迎你！",
-
-    { "text":"A", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"B", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"C", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"D", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"E", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"F", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"G", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"H", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"I", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"J", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"K", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"L", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"M", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"N", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"O", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"P", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"Q", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"R", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"S", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"T", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"U", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"V", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"W", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"X", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"Y", "voice":"en-US-JennyNeural", "rate":"-5%" },
-    { "text":"Z", "voice":"en-US-JennyNeural", "rate":"-5%" },
-
-    { "text":"cat",    "voice":"en-US-JennyNeural" },
-    { "text":"dog",    "voice":"en-US-JennyNeural" },
-    { "text":"pig",    "voice":"en-US-JennyNeural" },
-    { "text":"cow",    "voice":"en-US-JennyNeural" },
-    { "text":"duck",   "voice":"en-US-JennyNeural" },
-    { "text":"fish",   "voice":"en-US-JennyNeural" },
-    { "text":"bird",   "voice":"en-US-JennyNeural" },
-    { "text":"bear",   "voice":"en-US-JennyNeural" },
-    { "text":"lion",   "voice":"en-US-JennyNeural" },
-    { "text":"tiger",  "voice":"en-US-JennyNeural" },
-    { "text":"panda",  "voice":"en-US-JennyNeural" },
-    { "text":"rabbit", "voice":"en-US-JennyNeural" },
-    { "text":"sheep",  "voice":"en-US-JennyNeural" },
-    { "text":"monkey", "voice":"en-US-JennyNeural" },
-    { "text":"apple",  "voice":"en-US-JennyNeural" },
-    { "text":"banana", "voice":"en-US-JennyNeural" },
-    { "text":"cake",   "voice":"en-US-JennyNeural" },
-    { "text":"milk",   "voice":"en-US-JennyNeural" },
-    { "text":"egg",    "voice":"en-US-JennyNeural" },
-    { "text":"pizza",  "voice":"en-US-JennyNeural" },
-    { "text":"red",    "voice":"en-US-JennyNeural" },
-    { "text":"blue",   "voice":"en-US-JennyNeural" },
-    { "text":"green",  "voice":"en-US-JennyNeural" },
-    { "text":"yellow", "voice":"en-US-JennyNeural" },
-    { "text":"black",  "voice":"en-US-JennyNeural" },
-    { "text":"one",    "voice":"en-US-JennyNeural" },
-    { "text":"two",    "voice":"en-US-JennyNeural" },
-    { "text":"three",  "voice":"en-US-JennyNeural" },
-    { "text":"four",   "voice":"en-US-JennyNeural" },
-    { "text":"five",   "voice":"en-US-JennyNeural" },
-    { "text":"sun",    "voice":"en-US-JennyNeural" },
-    { "text":"moon",   "voice":"en-US-JennyNeural" },
-    { "text":"star",   "voice":"en-US-JennyNeural" },
-    { "text":"tree",   "voice":"en-US-JennyNeural" },
-    { "text":"flower", "voice":"en-US-JennyNeural" },
-    { "text":"car",    "voice":"en-US-JennyNeural" },
-    { "text":"book",   "voice":"en-US-JennyNeural" },
-    { "text":"house",  "voice":"en-US-JennyNeural" },
-    { "text":"ball",   "voice":"en-US-JennyNeural" },
-
-    { "text":"Hello",           "voice":"en-US-JennyNeural" },
-    { "text":"Goodbye",         "voice":"en-US-JennyNeural" },
-    { "text":"Thank you",       "voice":"en-US-JennyNeural" },
-    { "text":"Good morning",    "voice":"en-US-JennyNeural" },
-    { "text":"Good night",      "voice":"en-US-JennyNeural" },
-    { "text":"Happy birthday",  "voice":"en-US-JennyNeural" },
-    { "text":"I love you",      "voice":"en-US-JennyNeural" },
-    { "text":"Yes",             "voice":"en-US-JennyNeural" },
-    { "text":"No",              "voice":"en-US-JennyNeural" },
-    { "text":"Sorry",           "voice":"en-US-JennyNeural" },
-
+    {
+      "text": "A",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "B",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "C",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "D",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "E",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "F",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "G",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "H",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "I",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "J",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "K",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "L",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "M",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "N",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "O",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "P",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "Q",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "R",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "S",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "T",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "U",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "V",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "W",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "X",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "Y",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "Z",
+      "voice": "en-US-JennyNeural",
+      "rate": "-5%"
+    },
+    {
+      "text": "cat",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "dog",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "pig",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "cow",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "duck",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "fish",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "bird",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "bear",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "lion",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "tiger",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "panda",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "rabbit",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "sheep",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "monkey",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "apple",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "banana",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "cake",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "milk",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "egg",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "pizza",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "red",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "blue",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "green",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "yellow",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "black",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "one",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "two",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "three",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "four",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "five",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "sun",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "moon",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "star",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "tree",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "flower",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "car",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "book",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "house",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "ball",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Hello",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Goodbye",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Thank you",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Good morning",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Good night",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Happy birthday",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "I love you",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Yes",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "No",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "Sorry",
+      "voice": "en-US-JennyNeural"
+    },
     "耳朵长长，尾巴短短，最爱吃萝卜和青菜，跳来跳去真可爱。",
     "身穿黑白衣裳，最爱吃竹子，是中国的国宝。",
     "高高的个子，长长的脖子，最喜欢吃树叶。",
@@ -148,6 +482,162 @@
     "雨后天上出现，有七种颜色像一座桥。",
     "红黄绿三种颜色，站在马路口指挥车辆走走停停。",
     "过生日的时候要吃，上面插着蜡烛，甜甜的。",
-    "我住在水里，是个大力士，能一口吞掉很多小鱼。"
+    "我住在水里，是个大力士，能一口吞掉很多小鱼。",
+    {
+      "text": "a. apple",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "b. ball",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "c. cat",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "d. dog",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "e. egg",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "f. fish",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "goat",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "g. goat",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "hat",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "h. hat",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "igloo",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "i. igloo",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "juice",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "j. juice",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "key",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "k. key",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "l. lion",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "m. moon",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "nose",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "n. nose",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "orange",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "o. orange",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "p. pig",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "queen",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "q. queen",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "r. rabbit",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "s. sun",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "t. tree",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "umbrella",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "u. umbrella",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "van",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "v. van",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "water",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "w. water",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "box",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "x. box",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "y. yellow",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "zebra",
+      "voice": "en-US-JennyNeural"
+    },
+    {
+      "text": "z. zebra",
+      "voice": "en-US-JennyNeural"
+    }
   ]
 }

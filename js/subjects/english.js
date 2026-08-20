@@ -67,6 +67,45 @@ function letterListenQ(letters, exclude){
   };
 }
 
+/* ---------- 自然拼读 Phonics ---------- */
+
+// 字母 → 该字母开头的单词图
+function phonicsLetterToWordQ(pool, exclude){
+  const list = pool.map(p => p.letter);
+  const letter = pickIdx(list, exclude);
+  const target = pool.find(p => p.letter === letter);
+  const others = pick(pool.filter(p => p.letter !== letter), 3);
+  const opts = shuffle([target, ...others]);
+  return {
+    prompt: `哪个词是 <b>${letter}</b> 开头的？`,
+    display: `<div class="letter-big">${target.letter.toUpperCase()}${target.letter}</div>
+              <div style="font-size:22px;color:var(--ink-soft);font-weight:800;width:100%">发音 /${target.sound}/</div>`,
+    choices: opts.map(o => ({ label:o.emoji, value:o.word })),
+    answer: target.word,
+    speak: `${target.letter}. ${target.word}`, lang:'en-US',
+    hint: `<b>${target.letter}</b> 发 /${target.sound}/ 的音<br><b>${target.word}</b> ${target.emoji} ${target.cn}`,
+    kind:'phonics-letter', target: letter,
+  };
+}
+
+// 听单词 → 选首字母
+function phonicsWordToLetterQ(pool, exclude){
+  const list = pool.map(p => p.letter);
+  const letter = pickIdx(list, exclude);
+  const target = pool.find(p => p.letter === letter);
+  const others = pick(pool.filter(p => p.letter !== letter), 3);
+  const opts = shuffle([target, ...others]);
+  return {
+    prompt: `<b>${target.word}</b> 是什么字母开头？`,
+    display: `<div style="font-size:110px">${target.emoji}</div>`,
+    choices: opts.map(o => ({ label:o.letter.toUpperCase(), value:o.letter })),
+    answer: target.letter,
+    speak: target.word, lang:'en-US',
+    hint: `<b>${target.word}</b> ${target.emoji} 以 <b>${target.letter}</b> 开头，发 /${target.sound}/`,
+    kind:'phonics-word', target: letter,
+  };
+}
+
 /* ---------- 单词 / 短语共用生成器 ---------- */
 
 function wordToImageQ(pool, exclude){
@@ -120,6 +159,11 @@ export function makeEnglishLevel(n=5, tier='letters'){
       { fn: letterUpperToLowerQ, pool: cache.letters },
       { fn: letterLowerToUpperQ, pool: cache.letters },
       { fn: letterListenQ,       pool: cache.letters },
+    ];
+  } else if(tier === 'phonics'){
+    gens = [
+      { fn: phonicsLetterToWordQ, pool: cache.phonics },
+      { fn: phonicsWordToLetterQ, pool: cache.phonics },
     ];
   } else if(tier === 'words'){
     gens = [

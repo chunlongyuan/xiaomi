@@ -57,7 +57,7 @@ export function renderStats(ctx){
     <div class="stat-row"><span>正确率</span><b>${eAcc}%</b></div>
     <div class="stat-bar"><div class="fill" style="width:${eAcc}%;background:linear-gradient(90deg,#a0e7ff,#3ca4e8)"></div></div>
     <div class="stat-sub">
-      ${[['letters','🅰️ 字母'],['words','🐱 单词'],['phrases','👋 短语']].map(([tid, label]) => {
+      ${[['letters','🅰️ 字母'],['phonics','🔠 拼读'],['words','🐱 单词'],['phrases','👋 短语']].map(([tid, label]) => {
         const b = ((s.english && s.english.byTier) && s.english.byTier[tid]) || {c:0,w:0}; const t=b.c+b.w;
         return `<div class="stat-mini"><b>${label}</b><span>${t?`${b.c}/${t}`:'—'}</span></div>`;
       }).join('')}
@@ -70,7 +70,7 @@ export function renderStats(ctx){
         const when = new Date(x.at);
         const wh = `${when.getMonth()+1}/${when.getDate()} ${String(when.getHours()).padStart(2,'0')}:${String(when.getMinutes()).padStart(2,'0')}`;
         const zhLbl = { sprout:'启蒙', leaf:'入门', tree:'拓展', pine:'一年级' }[x.level];
-        const enLbl = { letters:'字母', words:'单词', phrases:'短语' }[x.level];
+        const enLbl = { letters:'字母', phonics:'拼读', words:'单词', phrases:'短语' }[x.level];
         const tierLbl = x.subject==='math'    ? (x.level ? x.level+' 以内' : '')
                       : x.subject==='english' ? (enLbl || '')
                       : (zhLbl || '');

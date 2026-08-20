@@ -1,9 +1,10 @@
 {
   "_meta": "英语分级参考幼儿英语启蒙 CLIL 教学法：字母 → 单词 → 短语",
   "tiers": [
-    { "id": "letters", "name": "ABC 字母", "sub": "3-5 岁 · 大小写认读",  "emoji": "🅰️", "color": "green"  },
-    { "id": "words",   "name": "常见单词", "sub": "4-6 岁 · 看图学词",    "emoji": "🐱", "color": "blue"   },
-    { "id": "phrases", "name": "日常短语", "sub": "5-7 岁 · 生活英语",    "emoji": "👋", "color": "orange" }
+    { "id": "letters", "name": "ABC 字母", "sub": "3-5 岁 · 大小写认读",   "emoji": "🅰️", "color": "green"  },
+    { "id": "phonics", "name": "自然拼读", "sub": "4-6 岁 · 字母发音",     "emoji": "🔠", "color": "violet" },
+    { "id": "words",   "name": "常见单词", "sub": "4-6 岁 · 看图学词",     "emoji": "🐱", "color": "blue"   },
+    { "id": "phrases", "name": "日常短语", "sub": "5-7 岁 · 生活英语",     "emoji": "👋", "color": "orange" }
   ],
   "letters": [
     {"upper":"A","lower":"a"},{"upper":"B","lower":"b"},{"upper":"C","lower":"c"},
@@ -60,6 +61,35 @@
     {"text":"book",   "cn":"书",     "emoji":"📖"},
     {"text":"house",  "cn":"房子",   "emoji":"🏠"},
     {"text":"ball",   "cn":"球",     "emoji":"⚽"}
+  ],
+  "_phonics_meta": "自然拼读 Phonics 是现代英语启蒙核心：字母 → 字母音 → 拼读",
+  "phonics": [
+    {"letter":"a", "sound":"æ", "word":"apple",  "cn":"苹果", "emoji":"🍎"},
+    {"letter":"b", "sound":"b", "word":"ball",   "cn":"球",   "emoji":"⚽"},
+    {"letter":"c", "sound":"k", "word":"cat",    "cn":"猫",   "emoji":"🐱"},
+    {"letter":"d", "sound":"d", "word":"dog",    "cn":"狗",   "emoji":"🐶"},
+    {"letter":"e", "sound":"e", "word":"egg",    "cn":"蛋",   "emoji":"🥚"},
+    {"letter":"f", "sound":"f", "word":"fish",   "cn":"鱼",   "emoji":"🐟"},
+    {"letter":"g", "sound":"g", "word":"goat",   "cn":"山羊", "emoji":"🐐"},
+    {"letter":"h", "sound":"h", "word":"hat",    "cn":"帽子", "emoji":"🎩"},
+    {"letter":"i", "sound":"ɪ", "word":"igloo",  "cn":"冰屋", "emoji":"🛖"},
+    {"letter":"j", "sound":"dʒ","word":"juice",  "cn":"果汁", "emoji":"🧃"},
+    {"letter":"k", "sound":"k", "word":"key",    "cn":"钥匙", "emoji":"🔑"},
+    {"letter":"l", "sound":"l", "word":"lion",   "cn":"狮子", "emoji":"🦁"},
+    {"letter":"m", "sound":"m", "word":"moon",   "cn":"月亮", "emoji":"🌙"},
+    {"letter":"n", "sound":"n", "word":"nose",   "cn":"鼻子", "emoji":"👃"},
+    {"letter":"o", "sound":"ɒ", "word":"orange", "cn":"橙子", "emoji":"🍊"},
+    {"letter":"p", "sound":"p", "word":"pig",    "cn":"猪",   "emoji":"🐷"},
+    {"letter":"q", "sound":"kw","word":"queen",  "cn":"女王", "emoji":"👑"},
+    {"letter":"r", "sound":"r", "word":"rabbit", "cn":"兔子", "emoji":"🐰"},
+    {"letter":"s", "sound":"s", "word":"sun",    "cn":"太阳", "emoji":"☀️"},
+    {"letter":"t", "sound":"t", "word":"tree",   "cn":"树",   "emoji":"🌳"},
+    {"letter":"u", "sound":"ʌ", "word":"umbrella","cn":"雨伞","emoji":"☂️"},
+    {"letter":"v", "sound":"v", "word":"van",    "cn":"货车", "emoji":"🚐"},
+    {"letter":"w", "sound":"w", "word":"water",  "cn":"水",   "emoji":"💧"},
+    {"letter":"x", "sound":"ks","word":"box",    "cn":"盒子", "emoji":"📦"},
+    {"letter":"y", "sound":"j", "word":"yellow", "cn":"黄色", "emoji":"🟡"},
+    {"letter":"z", "sound":"z", "word":"zebra",  "cn":"斑马", "emoji":"🦓"}
   ],
   "phrases": [
     {"text":"Hello",             "cn":"你好",           "emoji":"👋"},
