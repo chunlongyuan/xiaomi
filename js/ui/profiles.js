@@ -1,8 +1,15 @@
-// 小朋友档案切换 / 新建 / 删除
+// 小朋友档案 —— 切换 / 新建 / 编辑名字和头像 / 删除
 import { el, topbar, escapeHtml } from './common.js';
 import { store } from '../storage.js';
 
-const AVATARS = ['🦁','🐼','🐯','🦊','🐰','🐨','🐸','🐵','🐧','🐙','🦄','🐳','🐝','🐢','🦉','🐶','🐱','🐷'];
+// 扩展到 40+ 头像
+const AVATARS = [
+  '🦁','🐼','🐯','🦊','🐰','🐨','🐸','🐵','🐧','🐙',
+  '🦄','🐳','🐝','🐢','🦉','🐶','🐱','🐷','🐻','🐭',
+  '🐮','🐔','🐥','🦆','🦅','🐴','🐺','🐹','🐗','🦌',
+  '🐩','🐈','🦋','🐞','🦔','🦒','🐘','🦏','🐫','🐊',
+  '🦖','🦕','🦎','🦩','🦚',
+];
 
 export function renderProfiles(ctx){
   const { root, go, audio, params } = ctx;
@@ -15,7 +22,6 @@ export function renderProfiles(ctx){
 
   const wrap = el('div', 'level');
   root.appendChild(wrap);
-
   wrap.appendChild(el('div','reward-title', '👨‍👩‍👧 谁在玩？'));
 
   const list = el('div','profile-list');
@@ -33,14 +39,20 @@ export function renderProfiles(ctx){
           <div class="pr-meta">⭐ ${p.stars} · 🔥 ${p.streak} · 🎯 ${p.levelsCompleted} 关</div>
         </div>
         <div class="pr-actions">
+          <button class="tb-btn round" title="编辑" data-act="edit">✏️</button>
           <button class="tb-btn round" title="删除" data-act="del">🗑️</button>
         </div>
       `);
       row.addEventListener('click', e => {
-        if(e.target.closest('[data-act="del"]')) return;
+        if(e.target.closest('[data-act]')) return;
         audio.tap();
         store.switchProfile(p.id);
         go('home');
+      });
+      row.querySelector('[data-act="edit"]').addEventListener('click', e => {
+        e.stopPropagation();
+        audio.tap();
+        openEditor(p);
       });
       row.querySelector('[data-act="del"]').addEventListener('click', e => {
         e.stopPropagation();
@@ -81,6 +93,44 @@ export function renderProfiles(ctx){
       const p = store.createProfile(name, picked);
       store.tickDailyStreak();
       setTimeout(()=> go('home'), 400);
+    });
+  }
+
+  function openEditor(p){
+    const overlay = el('div','hint-overlay');
+    let picked = p.avatar;
+    overlay.innerHTML = `
+      <div class="hint-card">
+        <div class="ht">✏️ 修改档案</div>
+        <div class="hb" style="text-align:left">
+          <div style="margin-bottom:8px;font-weight:800">名字</div>
+          <input class="txt edit-name" value="${escapeHtml(p.name)}" maxlength="10" />
+          <div style="margin:14px 0 8px;font-weight:800">头像</div>
+          <div class="avatars edit-avatars"></div>
+        </div>
+        <button class="btn yellow" data-save>保存</button>
+        <button class="btn ghost small" data-cancel style="margin-left:8px">取消</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    const av = overlay.querySelector('.edit-avatars');
+    AVATARS.forEach(em => {
+      const b = el('button','av-btn' + (em===picked?' on':''), em);
+      b.addEventListener('click', ()=>{
+        picked = em;
+        [...av.children].forEach(c=>c.classList.remove('on'));
+        b.classList.add('on');
+        audio.tap();
+      });
+      av.appendChild(b);
+    });
+    const close = ()=> overlay.remove();
+    overlay.querySelector('[data-cancel]').addEventListener('click', ()=>{ audio.tap(); close(); });
+    overlay.querySelector('[data-save]').addEventListener('click', ()=>{
+      const name = overlay.querySelector('.edit-name').value.trim() || p.name;
+      audio.tap();
+      store.renameProfile(p.id, name, picked);
+      close();
+      renderList();
     });
   }
 }

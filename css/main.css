@@ -587,7 +587,7 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   transform:translateX(-50%);
   font-size:72px;line-height:1;
   filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));
-  transition:left .18s cubic-bezier(.4,1.4,.4,1);
+  /* 无 transition，跟手实时移动 */
   pointer-events:none;
 }
 .catch-basket.bounce{animation:bounce-b .25s}

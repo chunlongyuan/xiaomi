@@ -249,13 +249,13 @@ function qKey(q){
 export function makeMathLevel(n=5, level=20){
   const pool = [];
   if(level <= 5){
-    // 5 以内（3-4 岁小班）：数数、比大小、5 以内加减、简单排序
+    // 5 以内（3-4 岁小班）：只做具象题
+    // 不放找规律/填空/应用题——4 岁前抽象推理和阅读能力不够
     pool.push(
-      ()=>makeAdd(5), ()=>makeAdd(5),
-      ()=>makeSub(5),
-      countQ, countQ,
+      ()=>makeAdd(5), ()=>makeAdd(5), ()=>makeAdd(5),
+      ()=>makeSub(5), ()=>makeSub(5),
+      countQ, countQ, countQ,
       ()=>compareQ(5), ()=>compareQ(5),
-      ()=>patternQ(5),
     );
   } else if(level <= 10){
     pool.push(

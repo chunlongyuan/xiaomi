@@ -1,4 +1,4 @@
-// 接水果 —— 篮子跟着手指移动，接住 5 个水果
+// 接水果 —— 篮子跟手指移动，接住 5 个水果通关
 import { el, rand } from '../ui/common.js';
 import { flashPenalty } from './_penalty.js';
 
@@ -10,7 +10,8 @@ export function playCatch(ctx, onDone){
   let caught = 0;
   let missStreak = 0;
   let stopped = false;
-  let basketX = 50;   // 篮子中心 x（%）
+  let basketX = 50;      // 篮子中心 x（%）
+  let arenaRect = null;
 
   const panel = el('div','catch');
   panel.innerHTML = `
@@ -22,7 +23,7 @@ export function playCatch(ctx, onDone){
     <div class="catch-arena">
       <div class="catch-basket">🧺</div>
     </div>
-    <div class="whack-tip">点击/拖动移动篮子，接住掉下来的水果</div>
+    <div class="whack-tip">按住并左右滑动移动篮子</div>
   `;
   const arena = panel.querySelector('.catch-arena');
   const basket = panel.querySelector('.catch-basket');
@@ -37,30 +38,73 @@ export function playCatch(ctx, onDone){
   }
   basket.style.left = basketX + '%';
 
-  function moveTo(clientX){
-    const rect = arena.getBoundingClientRect();
-    const x = Math.min(95, Math.max(5, ((clientX - rect.left) / rect.width) * 100));
-    basketX = x;
-    basket.style.left = x + '%';
+  // 滑动流畅性：pointer 事件 + rAF + 无 CSS transition，篮子严丝合缝跟手
+  let rafPending = false, pendingX = null;
+  function schedule(){
+    if(rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => {
+      rafPending = false;
+      if(pendingX == null) return;
+      basketX = pendingX; pendingX = null;
+      basket.style.left = basketX + '%';
+    });
   }
-  arena.addEventListener('pointerdown', e => moveTo(e.clientX));
-  arena.addEventListener('pointermove', e => { if(e.buttons) moveTo(e.clientX); });
-  arena.addEventListener('touchmove',   e => { if(e.touches[0]) moveTo(e.touches[0].clientX); }, { passive:true });
+  function moveTo(clientX){
+    if(!arenaRect) arenaRect = arena.getBoundingClientRect();
+    pendingX = Math.min(95, Math.max(5, ((clientX - arenaRect.left) / arenaRect.width) * 100));
+    schedule();
+  }
+  arena.addEventListener('pointerdown', e => {
+    arenaRect = arena.getBoundingClientRect();
+    arena.setPointerCapture?.(e.pointerId);
+    moveTo(e.clientX);
+  });
+  arena.addEventListener('pointermove', e => {
+    if(e.buttons) moveTo(e.clientX);
+  });
+  arena.addEventListener('pointerup', e => { arena.releasePointerCapture?.(e.pointerId); });
+  // 触屏 fallback（部分老 iOS）
+  arena.addEventListener('touchstart', e => {
+    arenaRect = arena.getBoundingClientRect();
+    if(e.touches[0]) moveTo(e.touches[0].clientX);
+  }, { passive:true });
+  arena.addEventListener('touchmove', e => {
+    if(e.touches[0]) moveTo(e.touches[0].clientX);
+  }, { passive:true });
+  // 窗口尺寸变化重算
+  window.addEventListener('resize', () => { arenaRect = null; });
 
   function spawn(){
     if(stopped) return;
-    const isStar = Math.random() < 0.18;
-    const emoji = isStar ? '⭐' : FRUITS[rand(0, FRUITS.length-1)];
+    const emoji = FRUITS[rand(0, FRUITS.length-1)];
     const startX = 10 + Math.random()*80;
-    const f = el('div','catch-fruit' + (isStar?' star-bonus':''), emoji);
+    const f = el('div','catch-fruit', emoji);
     f.style.left = startX + '%';
     const dur = 3400 - Math.min(caught*180, 1200) + Math.random()*600;
     f.style.animationDuration = dur + 'ms';
     arena.appendChild(f);
     setTimeout(() => {
-      if(stopped) return;
+      if(stopped){ f.remove(); return; }
       const hit = Math.abs(startX - basketX) < 10;
-      if(!hit){
+      if(hit){
+        missStreak = 0;
+        caught += 1;
+        audio.pop(); audio.right();
+        if(caught > GOAL) caught = GOAL;
+        panel.querySelector('.hit').textContent = String(caught);
+        renderProgress();
+        basket.classList.add('bounce');
+        setTimeout(()=> basket.classList.remove('bounce'), 250);
+        if(caught >= GOAL){
+          stopped = true;
+          audio.fanfare();
+          panel.querySelector('.whack-tip').textContent = '🏆 完成任务！';
+          [...arena.querySelectorAll('.catch-fruit')].forEach(x => x.remove());
+          setTimeout(()=> onDone(true), 700);
+          return;
+        }
+      } else {
         missStreak += 1;
         if(missStreak >= 2){
           missStreak = 0;
@@ -71,34 +115,6 @@ export function playCatch(ctx, onDone){
             renderProgress();
             flashPenalty(panel, '-1');
           }
-        }
-      } else {
-        missStreak = 0;
-      }
-      if(hit){
-        if(isStar){
-          caught += 2;
-          audio.fanfare();
-          panel.querySelector('.whack-tip').textContent = '🌟 星星奖励 +2！';
-          setTimeout(()=>{
-            if(!stopped) panel.querySelector('.whack-tip').textContent = '点击/拖动移动篮子，接住掉下来的水果';
-          }, 1200);
-        } else {
-          caught += 1;
-          audio.pop(); audio.right();
-        }
-        if(caught > GOAL) caught = GOAL;
-        renderProgress();
-        panel.querySelector('.hit').textContent = String(caught);
-        basket.classList.add('bounce');
-        setTimeout(()=> basket.classList.remove('bounce'), 250);
-        if(caught >= GOAL){
-          stopped = true;
-          audio.fanfare();
-          panel.querySelector('.whack-tip').textContent = '🏆 完成任务！';
-          [...arena.querySelectorAll('.catch-fruit')].forEach(x => x.remove());
-          setTimeout(()=> onDone(true), 700);
-          return;
         }
       }
       f.remove();

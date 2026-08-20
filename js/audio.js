@@ -3,6 +3,11 @@
 // 找不到才回落到浏览器 SpeechSynthesis
 import { store } from './storage.js';
 
+/* ---------- 振动（Android 支持，iOS Safari 会 silent 忽略）---------- */
+function vibrate(pattern){
+  try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch{}
+}
+
 /* ---------- Web Audio ---------- */
 let ac = null;
 let unlocked = false;
@@ -196,9 +201,10 @@ export const audio = {
   speak,
   speakParts,
   stop: cancelAllSpeech,
-  tap(){ beep({freq:520, dur:.06, type:'triangle', gain:.07}); },
+  tap(){ vibrate(20); beep({freq:520, dur:.06, type:'triangle', gain:.07}); },
   // 答对：欢快上行三连音 + 泛音，声音更饱满
   right(){
+    vibrate([40, 40, 80]);
     beep({freq:660, dur:.16, type:'triangle', gain:.22});
     beep({freq:990, dur:.18, type:'triangle', gain:.22, when:.11});
     beep({freq:1320,dur:.26, type:'triangle', gain:.22, when:.24});
@@ -208,6 +214,7 @@ export const audio = {
   },
   // 答错：低沉双下降"duh-duh"，比原来更明显
   wrong(){
+    vibrate([180]);
     beep({freq:440, dur:.18, type:'square',   gain:.18, slideTo:280});
     beep({freq:280, dur:.22, type:'sawtooth', gain:.15, slideTo:160, when:.16});
   },
