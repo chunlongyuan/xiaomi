@@ -112,6 +112,66 @@ function listenQ(pool, exclude){
   };
 }
 
+/* ---------- 反义词 & 归类（部编版一年级重点题型）---------- */
+
+// 反义词对（每对左侧字必须在字库里，右侧字可以是"字库外的常识字"）
+const ANTONYMS = [
+  ['大','小'], ['多','少'], ['上','下'], ['天','地'],
+  ['早','晚'], ['白','黑'], ['前','后'], ['左','右'],
+  ['来','去'], ['开','关'], ['爱','恨'], ['进','出'],
+  ['长','短'], ['高','矮'], ['胖','瘦'], ['冷','热'],
+  ['哭','笑'], ['问','答'], ['买','卖'], ['出','入'],
+];
+
+function antonymQ(hanziPool){
+  // 只选左侧字在当前字库里的对
+  const known = new Set(hanziPool.map(h => h.char));
+  const pool = ANTONYMS.filter(p => known.has(p[0]));
+  if(pool.length < 2) return null;
+  const [q, a] = pool[rand(0, pool.length-1)];
+  // 干扰项：从其他 antonym 对里挑
+  const otherOptions = shuffle(pool.filter(p => p[0]!==q && p[1]!==a).map(p => p[1])).slice(0, 3);
+  const opts = shuffle([a, ...otherOptions]);
+  return {
+    prompt: `"<b>${q}</b>" 的反义词是？`,
+    display: `<div class="hanzi">${q}</div>`,
+    choices: opts.map(o => ({ label:o, value:o })),
+    answer: a,
+    speak: `${q} 的反义词`,
+    hint: `<b>${q} ↔ ${a}</b>，意思相反。`,
+    kind: 'antonym',
+    target: q + '-' + a,
+  };
+}
+
+// 归类：从 4 个词里挑一个"不同类"的（比如动物/水果/交通中的异类）
+const CATEGORIES = [
+  { name:'水果', items:['🍎','🍌','🍇','🍓','🍑','🍊','🍉','🥝','🍐'] },
+  { name:'动物', items:['🐶','🐱','🐰','🐷','🐮','🐴','🦁','🐘','🐒'] },
+  { name:'交通工具', items:['🚗','🚌','🚂','✈️','🚢','🚁','🛴','🚲'] },
+  { name:'食物', items:['🍔','🍕','🍞','🥚','🍚','🍜','🎂','🍦'] },
+  { name:'颜色', items:['🔴','🟠','🟡','🟢','🔵','🟣','⚫','⚪'] },
+  { name:'身体部位', items:['👀','👂','👄','🧠','🫀','🦶','✋','👃'] },
+];
+
+function classifyQ(){
+  const cat = CATEGORIES[rand(0, CATEGORIES.length-1)];
+  const others = CATEGORIES.filter(c => c.name !== cat.name);
+  const sameSet = pick(cat.items, 3);
+  const odd = pick(others[rand(0, others.length-1)].items, 1)[0];
+  const opts = shuffle([odd, ...sameSet]);
+  return {
+    prompt: `哪一个<b>不是</b>${cat.name}？`,
+    display: '',
+    choices: opts.map(o => ({ label:o, value:o })),
+    answer: odd,
+    speak: `哪一个不是${cat.name}`,
+    hint: `${sameSet.join('、')} 都是 <b>${cat.name}</b>，只有 ${odd} 不是。`,
+    kind: 'classify',
+    target: 'cls-' + odd,
+  };
+}
+
 /* ---------- 词组题（随文识字）---------- */
 
 function pickWord(pool, excludeTexts){
@@ -159,7 +219,7 @@ export function makeChineseLevel(n=5, tier='sprout'){
   const hanziPool = hanziByTier(tier);
   const wordPool  = wordsByTier(tier);
 
-  // 单字题（认字）+ 词组题（随文识字）—— 词组题权重更高
+  // 单字题 + 词组题 + 反义词 + 归类
   const gens = [
     { fn: pickHanziByEmojiQ,  pool: hanziPool, weight: 1 },
     { fn: pickEmojiByHanziQ,  pool: hanziPool, weight: 1 },
@@ -168,6 +228,13 @@ export function makeChineseLevel(n=5, tier='sprout'){
     { fn: wordToImageQ,       pool: wordPool,  weight: 2 },   // 词组题权重更高
     { fn: imageToWordQ,       pool: wordPool,  weight: 2 },
   ];
+  // 反义词从 leaf 起有；归类从 tree 起有
+  if(tier !== 'sprout'){
+    gens.push({ fn: (pool, ex)=>antonymQ(hanziPool), pool: hanziPool, weight: 1 });
+  }
+  if(tier === 'tree' || tier === 'pine'){
+    gens.push({ fn: (pool, ex)=>classifyQ(), pool: [1,2,3,4,5], weight: 1 });
+  }
   // 展开权重
   const weightedGens = gens.flatMap(g => Array(g.weight).fill(g));
 

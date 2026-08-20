@@ -240,6 +240,78 @@ function wordQ(max){
   };
 }
 
+/* ---------- 学前核心题型 ---------- */
+
+// 分与合：a = ? + b（培养数感，部编版一上单元核心）
+function decomposeQ(max){
+  const total = rand(3, max);
+  const b = rand(1, total-1);
+  const a = total - b;
+  const opts = new Set([a]);
+  while(opts.size<4){ const d = a + rand(-2, 2); if(d>=0 && d!==a) opts.add(d); }
+  return {
+    prompt: `<b>${total}</b> 可以分成 <b>${b}</b> 和几？`,
+    display: `<div style="font-size:64px">${'🔵'.repeat(total)}<br><span style="opacity:.4">${'🔵'.repeat(b)}</span>${'❓'.repeat(a)}</div>`,
+    choices: shuffle([...opts]).map(String),
+    answer: String(a),
+    speak: `${total} 可以分成 ${b} 和几？`,
+    hint: `<b>${total} = ${b} + ${a}</b><br>把 ${total} 分成 ${b} 和 <b>${a}</b>。`,
+    kind: 'decompose',
+  };
+}
+
+// 相邻数：X 的前一个 / 后一个（数序）
+function neighborQ(max){
+  const kind = rand(0, 2);   // 0=前, 1=后, 2=两个之间
+  const x = rand(2, max-1);
+  let prompt, ans, display;
+  if(kind === 0){
+    ans = x - 1;
+    display = `<div class="qbig"><span class="qmark">?</span> ${x}</div>`;
+    prompt = `<b>${x}</b> 前面是几？`;
+  } else if(kind === 1){
+    ans = x + 1;
+    display = `<div class="qbig">${x} <span class="qmark">?</span></div>`;
+    prompt = `<b>${x}</b> 后面是几？`;
+  } else {
+    ans = x;
+    display = `<div class="qbig">${x-1} <span class="qmark">?</span> ${x+1}</div>`;
+    prompt = `中间是几？`;
+  }
+  const opts = new Set([ans]);
+  while(opts.size<4){ const d = ans + rand(-2, 2); if(d>=0 && d!==ans) opts.add(d); }
+  return {
+    prompt,
+    display,
+    choices: shuffle([...opts]).map(String),
+    answer: String(ans),
+    speak: prompt.replace(/<[^>]+>/g,''),
+    hint: kind===0 ? `${x} 的前一个是 <b>${ans}</b>（${x} − 1 = ${ans}）`
+        : kind===1 ? `${x} 的后一个是 <b>${ans}</b>（${x} + 1 = ${ans}）`
+        : `${x-1} 和 ${x+1} 中间是 <b>${ans}</b>`,
+    kind: 'neighbor',
+  };
+}
+
+// 序数：第几个是什么（区分基数和序数）
+function ordinalQ(){
+  const items = ['🍎','🍌','🍇','🍓','🍑','🥕','🍋','🥝'];
+  const row = shuffle(items).slice(0, rand(4, 6));
+  const pos = rand(1, row.length);
+  const ans = row[pos-1];
+  const others = row.filter(x=>x!==ans).slice(0, 3);
+  const opts = shuffle([ans, ...others]);
+  return {
+    prompt: `<b>从左边数</b>，第 <b>${pos}</b> 个是什么？`,
+    display: `<div style="font-size:56px;letter-spacing:14px">${row.join('')}</div>`,
+    choices: opts.map(o => ({ label:o, value:o })),
+    answer: ans,
+    speak: `从左边数，第 ${pos} 个是什么`,
+    hint: `一个一个数：1、2、…第 ${pos} 个是 <b>${ans}</b>`,
+    kind: 'ordinal',
+  };
+}
+
 /* ---------- 关卡组合 ---------- */
 
 function qKey(q){
@@ -249,45 +321,53 @@ function qKey(q){
 export function makeMathLevel(n=5, level=20){
   const pool = [];
   if(level <= 5){
-    // 5 以内（3-4 岁小班）：只做具象题
-    // 不放找规律/填空/应用题——4 岁前抽象推理和阅读能力不够
+    // 5 以内（3-4 岁小班）：具象为主 + 序数 + 分与合入门
     pool.push(
-      ()=>makeAdd(5), ()=>makeAdd(5), ()=>makeAdd(5),
-      ()=>makeSub(5), ()=>makeSub(5),
-      countQ, countQ, countQ,
+      ()=>makeAdd(5), ()=>makeAdd(5),
+      ()=>makeSub(5),
+      countQ, countQ,
       ()=>compareQ(5), ()=>compareQ(5),
+      ordinalQ,
+      ()=>decomposeQ(5),
     );
   } else if(level <= 10){
+    // 10 以内（中班）：加减 + 分与合 + 相邻数 + 序数
     pool.push(
       ()=>makeAdd(10), ()=>makeAdd(10),
       ()=>makeSub(10), ()=>makeSub(10),
       countQ,
       ()=>compareQ(10),
+      ()=>decomposeQ(10),
+      ()=>neighborQ(10),
       ()=>patternQ(10),
       ()=>fillQ(10),
       ()=>wordQ(10),
     );
   } else if(level <= 20){
+    // 20 以内（大班）：凑十/破十主打 + 相邻数 + 应用题
     pool.push(
-      ()=>makeAdd(20), ()=>makeAdd(20),
-      ()=>makeSub(20), ()=>makeSub(20),
+      ()=>makeAdd(20), ()=>makeAdd(20), ()=>makeAdd(20),
+      ()=>makeSub(20), ()=>makeSub(20), ()=>makeSub(20),
       ()=>compareQ(20),
+      ()=>neighborQ(20),
       ()=>patternQ(20),
       ()=>fillQ(20),
       ()=>wordQ(20),
     );
   } else if(level <= 50){
     pool.push(
-      ()=>makeAdd(50), ()=>makeAdd(50),
-      ()=>makeSub(50), ()=>makeSub(50),
+      ()=>makeAdd(50), ()=>makeAdd(50), ()=>makeAdd(50),
+      ()=>makeSub(50), ()=>makeSub(50), ()=>makeSub(50),
+      ()=>neighborQ(50),
       ()=>patternQ(50),
       ()=>fillQ(50),
       ()=>wordQ(50),
     );
   } else {
     pool.push(
-      ()=>makeAdd(100), ()=>makeAdd(100),
-      ()=>makeSub(100), ()=>makeSub(100),
+      ()=>makeAdd(100), ()=>makeAdd(100), ()=>makeAdd(100),
+      ()=>makeSub(100), ()=>makeSub(100), ()=>makeSub(100),
+      ()=>neighborQ(100),
       ()=>patternQ(100),
       ()=>fillQ(100),
       ()=>wordQ(100),
