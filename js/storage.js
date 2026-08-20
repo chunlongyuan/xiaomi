@@ -18,6 +18,8 @@ function newProfile(name, avatar){
     levelsCompleted: 0,
     soundOn: true,
     lastReward: null,           // 上次选的奖励游戏 id
+    // 内容开关：只记「关掉的」，默认全开
+    disabled: { math:[], chinese:[], english:[], games:[] },
     stats: {
       math:    { correct:0, wrong:0, byLevel:{ 5:{c:0,w:0}, 10:{c:0,w:0}, 20:{c:0,w:0}, 50:{c:0,w:0}, 100:{c:0,w:0} } },
       chinese: { correct:0, wrong:0, byTier:{ sprout:{c:0,w:0}, leaf:{c:0,w:0}, tree:{c:0,w:0}, pine:{c:0,w:0} } },
@@ -128,4 +130,29 @@ export const store = {
   setSound(on){ const p=cur(); if(!p) return; p.soundOn = !!on; persist(); },
   setLastReward(id){ const p=cur(); if(!p) return; p.lastReward = id; persist(); },
   get lastReward(){ return cur()?.lastReward || null; },
+
+  /* ---------- 内容开关 ---------- */
+  _dis(){
+    const p = cur(); if(!p) return null;
+    if(!p.disabled) p.disabled = { math:[], chinese:[], english:[], games:[] };
+    ['math','chinese','english','games'].forEach(k => { if(!p.disabled[k]) p.disabled[k] = []; });
+    return p.disabled;
+  },
+  isEnabled(group, id){
+    const d = this._dis(); if(!d) return true;
+    return !d[group].includes(String(id));
+  },
+  setEnabled(group, id, on){
+    const d = this._dis(); if(!d) return;
+    const key = String(id);
+    const list = d[group];
+    const i = list.indexOf(key);
+    if(on && i >= 0) list.splice(i, 1);
+    if(!on && i < 0) list.push(key);
+    persist();
+  },
+  // 至少保留一项开启，防止全关导致空白
+  enabledCount(group, allIds){
+    return allIds.filter(id => this.isEnabled(group, id)).length;
+  },
 };

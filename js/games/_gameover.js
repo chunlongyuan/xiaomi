@@ -1,8 +1,8 @@
-// 通用"游戏结束"覆盖层 —— 失败时显示，可以重来
+// 通用"游戏结束"覆盖层
+// 奖励游戏输了就是输了 —— 不给"再来一次"，只能继续（一次机会才有分量）
 import { el } from '../ui/common.js';
 
-// onRetry: 重玩这一局；onGiveUp: 放弃（当作完成，继续流程）
-export function showGameOver(panel, { title='😵 失败啦', desc='', onRetry, onGiveUp }){
+export function showGameOver(panel, { title='😵 失败啦', desc='', onDone }){
   const ov = el('div','gameover-overlay');
   ov.innerHTML = `
     <div class="gameover-card">
@@ -10,14 +10,12 @@ export function showGameOver(panel, { title='😵 失败啦', desc='', onRetry, 
       <div class="go-title">${title}</div>
       ${desc ? `<div class="go-desc">${desc}</div>` : ''}
       <div class="go-actions">
-        <button class="btn yellow" data-retry>🔄 再来一次</button>
-        <button class="btn ghost"  data-skip>跳过</button>
+        <button class="btn yellow" data-continue>继续 →</button>
       </div>
     </div>`;
   panel.appendChild(ov);
   requestAnimationFrame(()=> ov.classList.add('show'));
-  ov.querySelector('[data-retry]').addEventListener('click', ()=>{ ov.remove(); onRetry && onRetry(); });
-  ov.querySelector('[data-skip]').addEventListener('click',  ()=>{ ov.remove(); onGiveUp && onGiveUp(); });
+  ov.querySelector('[data-continue]').addEventListener('click', ()=>{ ov.remove(); onDone && onDone(); });
 }
 
 // 生命值显示（❤️❤️❤️）

@@ -24,7 +24,8 @@ export function renderReward(ctx){
     panel.appendChild(el('div','pick-sub','答完题奖励一小段，玩什么你说了算～'));
 
     const grid = el('div','reward-picker');
-    REWARD_GAMES.forEach(g => {
+    const games = REWARD_GAMES.filter(g => store.isEnabled('games', g.id));
+    games.forEach(g => {
       const card = el('button','reward-card' + (last===g.id?' last':''), `
         <div class="rc-emoji">${g.emoji}</div>
         <div class="rc-title">${g.title}</div>
@@ -40,7 +41,7 @@ export function renderReward(ctx){
     `);
     randomCard.addEventListener('click', ()=>{
       audio.tap();
-      const g = REWARD_GAMES[Math.floor(Math.random()*REWARD_GAMES.length)];
+      const g = games[Math.floor(Math.random()*games.length)];
       playGame(g);
     });
     grid.appendChild(randomCard);

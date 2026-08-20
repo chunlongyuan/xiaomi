@@ -36,6 +36,7 @@ export function renderHome(ctx){
   grid.appendChild(subjectCard('english',  '英语乐园', '🔤', '3 档：ABC 到日常短语'));
   grid.appendChild(subjectCard('stickers', '贴纸收集', '🌟', `已收集 ${p.stickers.length} 枚`));
   grid.appendChild(subjectCard('stats',    '我的记录', '📊', `${p.levelsCompleted} 关 · 🔥${p.streak}`));
+  grid.appendChild(subjectCard('settings', '设置',     '⚙️', '开关学习内容和游戏'));
   root.appendChild(grid);
 
   function subjectCard(id, title, emoji, desc){
@@ -48,6 +49,7 @@ export function renderHome(ctx){
       audio.tap();
       if(id === 'stickers') go('stickers');
       else if(id === 'stats') go('stats');
+      else if(id === 'settings') go('settings');
       else go('difficulty', { subject: id });   // 数学 / 语文 / 英语 都进分级页
     });
     return c;

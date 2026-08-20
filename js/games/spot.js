@@ -53,15 +53,21 @@ export function playSpot(ctx, onDone){
       const [same, diff] = Math.random()<0.5 ? pair : [pair[1], pair[0]];
       const diffIdx = rand(0, 8);
       for(let i=0;i<9;i++){
-        const cell = el('button','spot-cell', i===diffIdx ? diff : same);
+        const em = i===diffIdx ? diff : same;
+        // 统一翻牌卡：点中翻面显示 ✓ / ✗
+        const cell = el('button','flipcard spot-cell', `
+          <div class="fc-face fc-front">${em}</div>
+          <div class="fc-face fc-back">${i===diffIdx ? '✅' : '❌'}</div>
+        `);
         cell.addEventListener('click', () => tap(cell, i===diffIdx));
         grid.appendChild(cell);
       }
     }
     function tap(cell, correct){
-      if(stopped || cell.classList.contains('correct')) return;
+      if(stopped || cell.classList.contains('flipped')) return;
+      audio.tap();
       if(correct){
-        cell.classList.add('correct');
+        cell.classList.add('flipped','fc-ok');
         audio.right();
         round += 1;
         renderProgress();
@@ -73,19 +79,19 @@ export function playSpot(ctx, onDone){
           setTimeout(startRound, 700);
         }
       } else {
-        cell.classList.add('wrong');
+        cell.classList.add('flipped','fc-bad');
         audio.wrong();
         lives -= 1;
         livesEl.innerHTML = renderLives(lives, MAX_LIVES);
-        setTimeout(()=> cell.classList.remove('wrong'), 300);
+        // 翻回正面让孩子继续找
+        setTimeout(()=> cell.classList.remove('flipped','fc-bad'), 800);
         if(lives <= 0){
           stopped = true;
           setTimeout(()=>{
             showGameOver(panel, {
               title:'💔 找错太多次啦',
               desc:`过了 ${round} 关，再仔细看看试试～`,
-              onRetry: start,
-              onGiveUp: ()=> onDone(false),
+              onDone: ()=> onDone(false),
             });
           }, 400);
         }

@@ -64,12 +64,16 @@ export async function playRiddle(ctx, onDone){
       clueEl.textContent = `🤔 ${r.clue}`;
       choicesEl.innerHTML = '';
       shuffle(r.options).forEach(op => {
-        const b = el('button','choice', op);
+        // 统一翻牌卡
+        const b = el('button','flipcard riddle-card', `
+          <div class="fc-face fc-front">${op}</div>
+          <div class="fc-face fc-back">${op === r.answer ? '✅' : '❌'}</div>
+        `);
         b.addEventListener('click', ()=>{
-          if(b.disabled || stopped) return;
+          if(b.disabled || stopped || b.classList.contains('flipped')) return;
           audio.tap();
           if(op === r.answer){
-            b.classList.add('correct');
+            b.classList.add('flipped','fc-ok');
             audio.right();
             [...choicesEl.children].forEach(c=>c.disabled=true);
             round += 1;
@@ -82,7 +86,7 @@ export async function playRiddle(ctx, onDone){
               setTimeout(showRound, 800);
             }
           } else {
-            b.classList.add('wrong');
+            b.classList.add('flipped','fc-bad');
             audio.wrong();
             b.disabled = true;
             lives -= 1;
@@ -94,8 +98,7 @@ export async function playRiddle(ctx, onDone){
                 showGameOver(panel, {
                   title:'💔 猜错太多次啦',
                   desc:`猜对了 ${round} 个，再仔细听听谜面～`,
-                  onRetry: start,
-                  onGiveUp: ()=> onDone(false),
+                  onDone: ()=> onDone(false),
                 });
               }, 500);
             }

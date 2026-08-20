@@ -29,7 +29,7 @@ export function renderDifficulty(ctx){
     const s = store.stats?.math;
     const grid = el('div','diff-grid');
     wrap.appendChild(grid);
-    MATH_TIERS.forEach(t => {
+    MATH_TIERS.filter(t => store.isEnabled('math', t.level)).forEach(t => {
       const st = s?.byLevel?.[t.level] || {c:0,w:0};
       const total = st.c + st.w;
       const acc = total ? Math.round(st.c*100/total) : null;
@@ -55,7 +55,7 @@ export function renderDifficulty(ctx){
   function renderTierCards(container, tiers, subjStats, subj){
     const grid = el('div','diff-grid');
     container.appendChild(grid);
-    tiers.forEach(t => {
+    tiers.filter(t => store.isEnabled(subj, t.id)).forEach(t => {
       const st = subjStats?.byTier?.[t.id] || {c:0,w:0};
       const total = st.c + st.w;
       const acc = total ? Math.round(st.c*100/total) : null;

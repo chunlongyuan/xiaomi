@@ -8,6 +8,7 @@ import { renderProfiles } from './ui/profiles.js';
 import { renderDifficulty } from './ui/difficulty.js';
 import { renderStats } from './ui/stats.js';
 import { renderArcade } from './ui/arcade.js';
+import { renderSettings } from './ui/settings.js';
 import { store } from './storage.js';
 import { audio } from './audio.js';
 import { preloadChinese } from './subjects/chinese.js';
@@ -23,6 +24,7 @@ const routes = {
   stickers:   ctx => renderStickers(ctx),
   stats:      ctx => renderStats(ctx),
   arcade:     ctx => renderArcade(ctx),
+  settings:   ctx => renderSettings(ctx),
 };
 
 const state = { name:'home', params:{} };

@@ -112,8 +112,7 @@ export function playBalloon(ctx, onDone){
         showGameOver(panel, {
           title:'💥 戳到炸弹啦！',
           desc:`这次戳中了 ${hits} 个气球，下次躲开炸弹试试～`,
-          onRetry: start,
-          onGiveUp: ()=> onDone(false),
+          onDone: ()=> onDone(false),
         });
       }, 500);
     }

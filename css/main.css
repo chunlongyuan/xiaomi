@@ -241,6 +241,44 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   .choice::before{padding-top:80px}
   .choice .face-back{font-size:80px}
 }
+
+/* ===== 通用翻牌卡（游戏内复用同一套交互）===== */
+.flipcard{
+  position:relative;perspective:900px;border:none;padding:0;
+  background:transparent;box-shadow:none;cursor:pointer;
+  aspect-ratio:1;
+}
+.flipcard .fc-face{
+  position:absolute;inset:0;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  backface-visibility:hidden;
+  transition:transform .42s cubic-bezier(.4,.9,.4,1.1);
+  box-shadow:var(--shadow-sm);
+  will-change:transform;
+  font-weight:900;line-height:1;
+}
+.flipcard .fc-front{
+  background:linear-gradient(180deg,#fff,#f3f6ff);
+  color:var(--ink);transform:rotateY(0);
+}
+.flipcard .fc-back{
+  transform:rotateY(180deg);
+  background:linear-gradient(180deg,var(--violet),var(--violet-d));
+  color:#fff;
+}
+/* 翻到背面 */
+.flipcard.flipped .fc-front{transform:rotateY(-180deg)}
+.flipcard.flipped .fc-back {transform:rotateY(0)}
+/* 结果着色 */
+.flipcard.fc-ok  .fc-front,.flipcard.fc-ok.flipped  .fc-back{
+  background:linear-gradient(180deg,#d9f8de,#7fd88a);color:#1f6b2a;animation:pop .4s;
+}
+.flipcard.fc-bad .fc-front,.flipcard.fc-bad.flipped .fc-back{
+  background:linear-gradient(180deg,#ffdada,#ff9a9a);color:#8b1a1a;animation:shake .35s;
+}
+.flipcard:not([disabled]):active .fc-face{transform:translateY(2px)}
+.flipcard.flipped:not([disabled]):active .fc-front{transform:rotateY(-180deg) translateY(2px)}
+.flipcard.matched{opacity:.55;transform:scale(.94);pointer-events:none}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
@@ -482,6 +520,41 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   .wh-progress{font-size:24px}
 }
 
+/* ===== Settings ===== */
+.set-section{margin-top:18px}
+.set-h{font-size:19px;color:#a5490b;margin:0 0 10px}
+.set-row{
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(180deg,#fff,#faf3e2);
+  border-radius:18px;padding:11px 14px;margin-bottom:8px;
+  box-shadow:var(--shadow-sm);cursor:pointer;
+  transition:opacity .2s,transform .1s;
+}
+.set-row:active{transform:translateY(1px)}
+.set-row.off{opacity:.45}
+.sr-emoji{font-size:30px;line-height:1;flex:none;width:38px;text-align:center}
+.sr-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.sr-name{font-weight:800;font-size:16px;color:var(--ink)}
+.sr-sub{font-size:12px;color:var(--ink-soft);font-weight:700;margin-top:1px}
+.shake-row{animation:shake .4s}
+
+.switch{position:relative;width:52px;height:30px;flex:none}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
+.switch .knob{
+  position:absolute;inset:0;border-radius:999px;
+  background:#d9d1c4;transition:background .25s;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.15);
+}
+.switch .knob::after{
+  content:"";position:absolute;top:3px;left:3px;
+  width:24px;height:24px;border-radius:50%;background:#fff;
+  box-shadow:0 2px 5px rgba(0,0,0,.25);
+  transition:transform .25s cubic-bezier(.4,1.4,.4,1);
+}
+.switch input:checked + .knob{background:linear-gradient(180deg,#7fd88a,#4fbf60)}
+.switch input:checked + .knob::after{transform:translateX(22px)}
+.card.settings{background:linear-gradient(180deg,#e8e4dc,#cfc8bb)}
+
 /* ===== Game over overlay + lives ===== */
 .gameover-overlay{
   position:absolute;inset:0;z-index:300;
@@ -583,24 +656,14 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   gap:8px;min-height:320px;padding:8px;
   background:rgba(255,255,255,.5);border-radius:20px;
 }
-.order-dot{
-  border:none;border-radius:50%;
-  font-size:36px;font-weight:900;color:#fff;
-  background:linear-gradient(180deg,var(--pink),var(--pink-d));
-  box-shadow:var(--shadow-sm);cursor:pointer;
-  aspect-ratio:1;justify-self:center;align-self:center;
-  width:64px;height:64px;
-  transition:transform .1s;
-}
-.order-dot:active{transform:translateY(2px) !important}
-.order-dot.done{
-  background:linear-gradient(180deg,#7fd88a,#4fbf60);
-  animation:pop .4s;pointer-events:none;
-}
-.order-dot.wrong{animation:shake .3s}
+.order-dot{width:64px;height:64px;justify-self:center;align-self:center}
+.order-dot .fc-face{border-radius:50%;font-size:34px}
+.order-dot .fc-front{background:linear-gradient(180deg,var(--pink),var(--pink-d));color:#fff}
+.order-dot .fc-back{background:linear-gradient(180deg,#7fd88a,#4fbf60);font-size:30px}
 @media (max-width: 480px){
   .order-arena{gap:6px;padding:6px;min-height:260px}
-  .order-dot{width:52px;height:52px;font-size:28px}
+  .order-dot{width:52px;height:52px}
+  .order-dot .fc-face{font-size:28px}
   .balloon-arena{height:380px}
   .balloon-item{width:64px;height:64px;font-size:58px}
 }
@@ -613,16 +676,8 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
   max-width:420px;margin:0 auto;
 }
-.spot-cell{
-  aspect-ratio:1;border:none;border-radius:20px;cursor:pointer;
-  background:linear-gradient(180deg,#fff,#f6f2ea);
-  box-shadow:var(--shadow-sm);
-  font-size:52px;line-height:1;
-  transition:transform .1s;
-}
-.spot-cell:active{transform:translateY(2px)}
-.spot-cell.correct{background:linear-gradient(180deg,#d9f8de,#7fd88a);animation:pop .4s}
-.spot-cell.wrong{background:linear-gradient(180deg,#ffdada,#ff9a9a);animation:shake .3s}
+.spot-cell .fc-face{font-size:52px;border-radius:20px}
+.spot-cell .fc-back{background:linear-gradient(180deg,#fff,#f6f2ea)}
 @media (max-width:480px){ .spot-cell{font-size:42px} }
 
 /* ===== Catch fruit ===== */
@@ -665,23 +720,14 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 /* ===== Reward panel ===== */
 .riddle{background:linear-gradient(180deg,#fff7dd,#ffe0a1);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:center;position:relative}
 .riddle .clue{font-size:22px;font-weight:800;line-height:1.6;padding:16px 4px;color:var(--ink)}
-.riddle .choices{margin-top:14px}
-.riddle .choice{min-height:110px;font-size:56px}
+.riddle .choices{margin-top:14px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.riddle-card .fc-face{font-size:56px;border-radius:22px}
+.riddle-card .fc-back{background:linear-gradient(180deg,#fff,#f6f2ea)}
 
 .memory{background:linear-gradient(180deg,#e6f5ff,#c6e6ff);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);position:relative}
 .mem-grid{display:grid;gap:10px;margin:0 auto;grid-template-columns:repeat(4,minmax(0,1fr));max-width:520px}
-.mem-card{
-  aspect-ratio:1;border-radius:18px;border:none;cursor:pointer;
-  background:linear-gradient(180deg,var(--pink),var(--pink-d));
-  box-shadow:var(--shadow-sm);
-  font-size:40px;color:#fff;font-weight:900;position:relative;perspective:600px;
-}
-.mem-card .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:18px;backface-visibility:hidden;transition:transform .35s}
-.mem-card .back{background:linear-gradient(180deg,var(--violet),var(--violet-d));color:#fff}
-.mem-card .front{background:linear-gradient(180deg,#fff,#eef5ff);color:var(--ink);transform:rotateY(180deg);font-size:46px}
-.mem-card.flipped .back{transform:rotateY(180deg)}
-.mem-card.flipped .front{transform:rotateY(360deg)}
-.mem-card.matched{opacity:.55;transform:scale(.95)}
+.mem-card .fc-face{font-size:46px;border-radius:18px}
+.mem-card .fc-back{background:linear-gradient(180deg,var(--violet),var(--violet-d))}
 
 /* Stickers */
 .stickers-wall{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
@@ -736,7 +782,6 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   .diff-grid{grid-template-columns:1fr 1fr}
   .kpi-grid{grid-template-columns:repeat(2,1fr)}
   .mem-grid{gap:8px}
-  .mem-card .front{font-size:36px}
   body::before, body::after{font-size:40px}
   .reward-card{min-height:100px}
   .reward-card .rc-emoji{font-size:44px}

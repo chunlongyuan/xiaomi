@@ -28,7 +28,7 @@ export function renderArcade(ctx){
     panel.appendChild(el('div','pick-sub','想玩哪个就玩哪个，随便玩！'));
 
     const grid = el('div','reward-picker');
-    REWARD_GAMES.forEach(g => {
+    REWARD_GAMES.filter(g => store.isEnabled('games', g.id)).forEach(g => {
       const card = el('button','reward-card', `
         <div class="rc-emoji">${g.emoji}</div>
         <div class="rc-title">${g.title}</div>

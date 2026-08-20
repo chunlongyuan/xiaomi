@@ -1,6 +1,9 @@
 // 通用 DOM 工具 + topbar
 import { store } from '../storage.js';
 
+// 跨页面保留的连点状态（每次 go() 都会重建 topbar，所以状态要放模块级）
+const tapState = { count: 0, last: 0 };
+
 export function el(tag, cls, html){
   const n = document.createElement(tag);
   if(cls) n.className = cls;
@@ -29,22 +32,20 @@ export function topbar(ctx, opts={}){
   if(p){
     const chip = el('button','profile-chip', `<span class="av">${p.avatar}</span><span class="nm">${escapeHtml(p.name)}</span>`);
     chip.title = '切换小朋友（连点三下进游戏厅）';
-    // 单击 → 档案页；600ms 内连点 3 下 → 游戏厅
-    let taps = 0, tapTimer = null;
+    // 单击立刻去档案页；若在 800ms 内累计点到 3 下，直接跳游戏厅
     chip.addEventListener('click', ()=>{
       audio.tap();
-      taps += 1;
-      clearTimeout(tapTimer);
-      if(taps >= 3){
-        taps = 0;
+      const now = Date.now();
+      if(now - (tapState.last || 0) > 800) tapState.count = 0;
+      tapState.last = now;
+      tapState.count += 1;
+      if(tapState.count >= 3){
+        tapState.count = 0;
         audio.fanfare();
         go('arcade');
-        return;
+      } else {
+        go('profiles');    // 单击不再等待，立即响应
       }
-      tapTimer = setTimeout(()=>{
-        if(taps > 0 && taps < 3) go('profiles');
-        taps = 0;
-      }, 600);
     });
     left.appendChild(chip);
   }

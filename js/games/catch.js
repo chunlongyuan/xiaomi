@@ -132,8 +132,7 @@ export function playCatch(ctx, onDone){
         showGameOver(panel, {
           title:'💔 水果掉光了',
           desc:`接住了 ${caught} 个，漏掉 ${MAX_LIVES} 个就结束咯`,
-          onRetry: start,
-          onGiveUp: ()=> onDone(false),
+          onDone: ()=> onDone(false),
         });
       }, 400);
     }

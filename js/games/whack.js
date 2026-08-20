@@ -135,8 +135,7 @@ export function playWhack(ctx, onDone){
         showGameOver(panel, {
           title:'💔 生命值用完了',
           desc:`敲中了 ${hits} 只，敲空 ${MAX_LIVES} 次就结束咯`,
-          onRetry: start,
-          onGiveUp: ()=> onDone(false),
+          onDone: ()=> onDone(false),
         });
       }, 400);
     }

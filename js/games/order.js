@@ -52,19 +52,23 @@ export function playOrder(ctx, onDone){
 
       chosen.forEach(([r,c], i) => {
         const num = i + 1;
-        const dot = el('button','order-dot', String(num));
+        // 统一翻牌卡：点对翻面显示 ⭐
+        const dot = el('button','flipcard order-dot', `
+          <div class="fc-face fc-front">${num}</div>
+          <div class="fc-face fc-back">⭐</div>
+        `);
         dot.style.gridRow = (r+1);
         dot.style.gridColumn = (c+1);
-        dot.style.transform = `translate(${rand(-8,8)}px, ${rand(-8,8)}px)`;
         dot.dataset.num = String(num);
         dot.addEventListener('click', () => tap(dot, num));
         arena.appendChild(dot);
       });
 
       function tap(dot, num){
-        if(stopped || dot.classList.contains('done')) return;
+        if(stopped || dot.classList.contains('flipped')) return;
+        audio.tap();
         if(num === expected){
-          dot.classList.add('done');
+          dot.classList.add('flipped','fc-ok');
           audio.pop();
           audio.speak(String(num));
           expected += 1;
@@ -81,19 +85,18 @@ export function playOrder(ctx, onDone){
             }
           }
         } else {
-          dot.classList.add('wrong');
+          dot.classList.add('fc-bad');
           audio.wrong();
           lives -= 1;
           livesEl.innerHTML = renderLives(lives, MAX_LIVES);
-          setTimeout(()=> dot.classList.remove('wrong'), 300);
+          setTimeout(()=> dot.classList.remove('fc-bad'), 400);
           if(lives <= 0){
             stopped = true;
             setTimeout(()=>{
               showGameOver(panel, {
                 title:'💔 顺序点错太多次',
                 desc:`过了 ${round} 轮，记得从 1 开始一个一个点哦`,
-                onRetry: start,
-                onGiveUp: ()=> onDone(false),
+                onDone: ()=> onDone(false),
               });
             }, 400);
           }
