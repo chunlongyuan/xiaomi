@@ -104,7 +104,7 @@ export function renderLevel(ctx){
       b.innerHTML = typeof c === 'string' ? label
         : `<div>${label}</div>${label !== value ? `<div class="cap">${value}</div>` : ''}`;
       b.dataset.value = value;
-      b.addEventListener('click', ()=> answer(b, value, q));
+      b.addEventListener('click', ()=>{ audio.tap(); answer(b, value, q); });
       choices.appendChild(b);
     });
     panel.appendChild(choices);
