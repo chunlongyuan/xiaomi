@@ -28,8 +28,24 @@ export function topbar(ctx, opts={}){
   }
   if(p){
     const chip = el('button','profile-chip', `<span class="av">${p.avatar}</span><span class="nm">${escapeHtml(p.name)}</span>`);
-    chip.title = '切换小朋友';
-    chip.addEventListener('click', ()=>{ audio.tap(); go('profiles'); });
+    chip.title = '切换小朋友（连点三下进游戏厅）';
+    // 单击 → 档案页；600ms 内连点 3 下 → 游戏厅
+    let taps = 0, tapTimer = null;
+    chip.addEventListener('click', ()=>{
+      audio.tap();
+      taps += 1;
+      clearTimeout(tapTimer);
+      if(taps >= 3){
+        taps = 0;
+        audio.fanfare();
+        go('arcade');
+        return;
+      }
+      tapTimer = setTimeout(()=>{
+        if(taps > 0 && taps < 3) go('profiles');
+        taps = 0;
+      }, 600);
+    });
     left.appendChild(chip);
   }
   bar.appendChild(left);

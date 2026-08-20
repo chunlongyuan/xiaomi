@@ -105,11 +105,13 @@ export function renderProfiles(ctx){
         <div class="hb" style="text-align:left">
           <div style="margin-bottom:8px;font-weight:800">名字</div>
           <input class="txt edit-name" value="${escapeHtml(p.name)}" maxlength="10" />
-          <div style="margin:14px 0 8px;font-weight:800">头像</div>
+          <div style="margin:14px 0 8px;font-weight:800">头像（选一个）</div>
           <div class="avatars edit-avatars"></div>
         </div>
-        <button class="btn yellow" data-save>保存</button>
-        <button class="btn ghost small" data-cancel style="margin-left:8px">取消</button>
+        <div class="card-actions">
+          <button class="btn ghost" data-cancel>取消</button>
+          <button class="btn yellow" data-save>✓ 保存</button>
+        </div>
       </div>`;
     document.body.appendChild(overlay);
     const av = overlay.querySelector('.edit-avatars');

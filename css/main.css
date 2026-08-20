@@ -254,9 +254,19 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 .hint-card{
   background:var(--card);border-radius:24px;box-shadow:var(--shadow);
   padding:22px 20px;max-width:420px;width:100%;text-align:center;
+  max-height:86dvh;display:flex;flex-direction:column;
 }
-.hint-card .ht{font-size:22px;font-weight:900;color:#a5490b;margin-bottom:10px}
-.hint-card .hb{font-size:18px;line-height:1.7;color:var(--ink);margin-bottom:16px}
+.hint-card .ht{font-size:22px;font-weight:900;color:#a5490b;margin-bottom:10px;flex:none}
+.hint-card .hb{
+  font-size:18px;line-height:1.7;color:var(--ink);margin-bottom:16px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1 1 auto;min-height:0;
+}
+/* 按钮区吸底，永远看得见 */
+.hint-card .card-actions{
+  flex:none;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  padding-top:12px;border-top:2px solid rgba(0,0,0,.06);
+}
+.hint-card > .btn{flex:none}
 .hint-card .hb .calc{display:block;margin-top:10px;padding:10px;background:#fff7dd;border-radius:14px;font-family:"SF Mono",monospace;font-size:17px;color:#5a3d00}
 .hint-card .hb .muted{color:var(--ink-soft);font-weight:700}
 .hint-card .hb u{text-decoration:underline dashed}
