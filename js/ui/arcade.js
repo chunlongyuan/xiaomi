@@ -49,7 +49,12 @@ export function renderArcade(ctx){
 
   function playGame(g){
     wrap.innerHTML = '';
-    g.play({ ...ctx, root: wrap }, () => {
+    g.play({ ...ctx, root: wrap }, (won) => {
+      if(won === false){
+        // 没通关就跳过 —— 回游戏厅菜单，不发贴纸
+        go('arcade');
+        return;
+      }
       burst('🎉'); confetti(1800, 80);
       audio.fanfare();
       // 游戏厅里通关也送贴纸（但不计入做题统计）

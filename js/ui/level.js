@@ -1,5 +1,5 @@
 // 通用关卡组件
-import { el, topbar, toast, burst, confetti } from './common.js';
+import { el, topbar, burst, confetti } from './common.js';
 import { makeMathLevel } from '../subjects/math.js';
 import { makeChineseLevel } from '../subjects/chinese.js';
 import { makeEnglishLevel } from '../subjects/english.js';
@@ -100,9 +100,8 @@ export function renderLevel(ctx){
     q.choices.forEach(c => {
       const label = typeof c === 'string' ? c : c.label;
       const value = typeof c === 'string' ? c : c.value;
-      const frontInner = typeof c === 'string'
-        ? label
-        : `<div>${label}</div>${label !== value ? `<div class="cap">${value}</div>` : ''}`;
+      // 只显示 label —— 绝不把 value 写出来，否则答案直接暴露在选项上
+      const frontInner = typeof c === 'string' ? label : `<div>${label}</div>`;
       const b = el('button','choice flippable');
       b.innerHTML = `
         <div class="face face-front">${frontInner}</div>
@@ -226,8 +225,8 @@ export function renderLevel(ctx){
           // 提示弹窗停留，直到点 "知道啦" 才关闭并进入下一题
           showHint(q, ()=>{ idx++; attempts = 0; render(); });
         } else {
-          toast('正确答案是 ' + q.answer, 1500);
-          setTimeout(()=>{ idx++; attempts = 0; render(); }, 1500);
+          // 无 hint 的题：正确答案已经翻牌高亮，多停一会儿让孩子看清，不弹 toast
+          setTimeout(()=>{ idx++; attempts = 0; render(); }, 1800);
         }
       }
       // 前 1-2 次错：牌翻回来让用户再选

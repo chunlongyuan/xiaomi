@@ -59,7 +59,14 @@ export function renderReward(ctx){
   function playGame(g){
     store.setLastReward(g.id);
     wrap.innerHTML = '';
-    g.play({ ...ctx, root:wrap }, () => onWon());
+    g.play({ ...ctx, root:wrap }, (won) => {
+      if(won === false){
+        // 游戏没通关 —— 不发贴纸，直接回结算页
+        go('result', { ...params });
+        return;
+      }
+      onWon();
+    });
   }
 
   function onWon(){

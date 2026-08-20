@@ -482,6 +482,48 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   .wh-progress{font-size:24px}
 }
 
+/* ===== Game over overlay + lives ===== */
+.gameover-overlay{
+  position:absolute;inset:0;z-index:300;
+  background:rgba(30,20,10,.62);backdrop-filter:blur(3px);
+  border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;transition:opacity .25s;
+}
+.gameover-overlay.show{opacity:1}
+.gameover-card{
+  background:var(--card);border-radius:26px;box-shadow:var(--shadow);
+  padding:26px 22px;max-width:340px;width:100%;text-align:center;
+  transform:scale(.85);transition:transform .3s cubic-bezier(.4,1.5,.4,1);
+}
+.gameover-overlay.show .gameover-card{transform:scale(1)}
+.go-emoji{font-size:76px;line-height:1;animation:burst .7s ease-out}
+.go-title{font-size:24px;font-weight:900;color:#c0392b;margin:6px 0 4px}
+.go-desc{font-size:15px;color:var(--ink-soft);font-weight:700;line-height:1.6;margin-bottom:16px}
+.go-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.go-actions .btn{min-height:52px;font-size:16px;padding:8px 18px}
+
+.lives{display:inline-flex;gap:2px;font-size:18px;flex:none}
+.lives .life{transition:transform .2s,opacity .2s}
+.lives .life.off{opacity:.5;transform:scale(.85)}
+.bomb-warn{font-size:12px;color:#c0392b;font-weight:800}
+
+/* 炸弹气球 */
+.balloon-item.bomb{
+  filter:drop-shadow(0 0 10px rgba(200,40,40,.6)) drop-shadow(0 6px 10px rgba(0,0,0,.35));
+  animation: float-up linear forwards, bomb-pulse .7s ease-in-out infinite;
+}
+@keyframes bomb-pulse{
+  0%,100%{ text-shadow: 0 0 8px rgba(220,60,60,.8); }
+  50%    { text-shadow: 0 0 22px rgba(255,80,60,1), 0 0 8px #fff; }
+}
+.balloon-item.exploded{ animation: bomb-boom .5s ease-out forwards; }
+@keyframes bomb-boom{
+  0%   { transform:translate(-50%,0) scale(1);   opacity:1; }
+  30%  { transform:translate(-50%,0) scale(2.4); opacity:1; filter:brightness(2.5) saturate(2); }
+  100% { transform:translate(-50%,0) scale(3.5); opacity:0; }
+}
+
 /* ===== Penalty flash ===== */
 .penalty-flash{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);
@@ -533,7 +575,7 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 }
 
 /* ===== Number Order ===== */
-.order{background:linear-gradient(180deg,#fff7dd,#ffe0a1);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow)}
+.order{background:linear-gradient(180deg,#fff7dd,#ffe0a1);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow);position:relative}
 .order-hint{text-align:center;font-weight:800;color:var(--ink-soft);margin:6px 0 12px;font-size:15px}
 .order-hint b{color:var(--pink-d);font-size:18px;letter-spacing:.04em}
 .order-arena{
@@ -564,7 +606,7 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 }
 
 /* ===== Spot the difference ===== */
-.spot{background:linear-gradient(180deg,#e5dbff,#c8b8ff);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow)}
+.spot{background:linear-gradient(180deg,#e5dbff,#c8b8ff);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow);position:relative}
 .spot-hint{text-align:center;font-weight:800;color:var(--ink-soft);margin:6px 0 12px;font-size:15px}
 .spot-hint b{color:var(--pink-d)}
 .spot-grid{
@@ -621,7 +663,7 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 }
 
 /* ===== Reward panel ===== */
-.riddle{background:linear-gradient(180deg,#fff7dd,#ffe0a1);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:center}
+.riddle{background:linear-gradient(180deg,#fff7dd,#ffe0a1);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:center;position:relative}
 .riddle .clue{font-size:22px;font-weight:800;line-height:1.6;padding:16px 4px;color:var(--ink)}
 .riddle .choices{margin-top:14px}
 .riddle .choice{min-height:110px;font-size:56px}
