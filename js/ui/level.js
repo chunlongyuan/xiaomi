@@ -95,14 +95,19 @@ export function renderLevel(ctx){
     }
     panel.appendChild(tools);
 
-    // 选项
+    // 选项 —— 带翻牌正反面
     const choices = el('div','choices');
     q.choices.forEach(c => {
       const label = typeof c === 'string' ? c : c.label;
       const value = typeof c === 'string' ? c : c.value;
-      const b = el('button','choice');
-      b.innerHTML = typeof c === 'string' ? label
+      const frontInner = typeof c === 'string'
+        ? label
         : `<div>${label}</div>${label !== value ? `<div class="cap">${value}</div>` : ''}`;
+      const b = el('button','choice flippable');
+      b.innerHTML = `
+        <div class="face face-front">${frontInner}</div>
+        <div class="face face-back"><span class="mark"></span></div>
+      `;
       b.dataset.value = value;
       b.addEventListener('click', ()=>{ audio.tap(); answer(b, value, q); });
       choices.appendChild(b);
@@ -183,29 +188,38 @@ export function renderLevel(ctx){
     overlay.querySelector('[data-close]').addEventListener('click', ()=>{ audio.tap(); close(); });
   }
 
+  function flipReveal(btn, correct){
+    const mark = btn.querySelector('.face-back .mark');
+    if(mark) mark.textContent = correct ? '✓' : '✗';
+    btn.classList.add(correct ? 'reveal-correct' : 'reveal-wrong');
+    audio.swoosh();
+  }
+
   function answer(btn, value, q){
     if(btn.disabled) return;
     if(String(value) === String(q.answer)){
-      btn.classList.add('correct');
-      audio.right();
+      flipReveal(btn, true);
+      // 翻牌完成后再放答对音，避免和 swoosh 撞
+      setTimeout(()=> audio.right(), 220);
       [...btn.parentNode.children].forEach(c=>c.disabled = true);
       results[idx] = 'right';
       // 大特效（不再弹夸奖 toast，只保留 emoji burst + 撒花 + 音效）
       burst(pickCelebration());
       confetti(1000, 40);
-      // 数一数的题需要多留一会儿，方便孩子核对
-      const wait = q.kind === 'count' ? 1400 : 900;
+      const wait = q.kind === 'count' ? 1500 : 1000;
       setTimeout(()=>{ idx++; attempts = 0; render(); }, wait);
     } else {
-      btn.classList.add('wrong');
-      audio.wrong();
+      flipReveal(btn, false);
+      setTimeout(()=> audio.wrong(), 220);
       btn.disabled = true;
       attempts++;
       if(attempts >= 3){
         // 展示正确 + 讲解
         [...btn.parentNode.children].forEach(c => {
           c.disabled = true;
-          if(String(c.dataset.value).trim() === String(q.answer).trim()) c.classList.add('correct');
+          if(String(c.dataset.value).trim() === String(q.answer).trim() && !c.classList.contains('reveal-correct')){
+            flipReveal(c, true);
+          }
         });
         results[idx] = 'wrong';
         if(q.hint){
@@ -215,9 +229,13 @@ export function renderLevel(ctx){
           toast('正确答案是 ' + q.answer, 1500);
           setTimeout(()=>{ idx++; attempts = 0; render(); }, 1500);
         }
-      } else {
-        // 不再弹 "再想想" toast，红色抖动 + 错误音效已经是清晰反馈
-        setTimeout(()=> btn.classList.remove('wrong'), 500);
+      }
+      // 前 1-2 次错：牌翻回来让用户再选
+      else {
+        setTimeout(()=>{
+          btn.classList.remove('reveal-wrong');
+          btn.disabled = false;
+        }, 900);
       }
     }
   }

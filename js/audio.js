@@ -220,6 +220,10 @@ export const audio = {
     beep({freq:180, dur:.06, type:'square', gain:.18});
     beep({freq:90,  dur:.10, type:'square', gain:.14, when:.05});
   },
+  // 卡片翻转的短促 "唰" 声
+  swoosh(){
+    beep({freq:900, dur:.16, type:'sawtooth', gain:.08, slideTo:220});
+  },
   // 调试用
   hasClipFor(text){ return !!getAudioFor(text); },
   currentVoiceName(lang){ return pickVoice(lang)?.name || ''; },

@@ -193,17 +193,54 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
 
 .choices{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-top:6px}
 .choice{
-  min-height:96px;border-radius:22px;border:none;
-  background:linear-gradient(180deg,#fff,#f3f6ff);
-  box-shadow:var(--shadow-sm);
+  min-height:96px;border-radius:22px;border:none;padding:0;
+  background:transparent;box-shadow:none;
   font-size:38px;font-weight:900;color:var(--ink);
-  cursor:pointer;transition:transform .1s;
+  cursor:pointer;
+  position:relative;
+  perspective:900px;
+}
+.choice .face{
+  position:absolute;inset:0;border-radius:22px;
   display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;
+  backface-visibility:hidden;
+  transition:transform .45s cubic-bezier(.4,.9,.4,1.1);
+  box-shadow:var(--shadow-sm);
+  will-change:transform;
+}
+.choice .face-front{
+  background:linear-gradient(180deg,#fff,#f3f6ff);
+  transform:rotateY(0);
+}
+.choice .face-back{
+  transform:rotateY(180deg);
+  font-size:96px;line-height:1;font-weight:900;
 }
 .choice .cap{font-size:14px;color:var(--ink-soft);font-weight:700}
-.choice:active{transform:translateY(2px)}
-.choice.correct{background:linear-gradient(180deg,#d9f8de,#7fd88a);animation:pop .4s}
-.choice.wrong{background:linear-gradient(180deg,#ffdada,#ff9a9a);animation:shake .4s}
+
+/* 翻牌到反面 */
+.choice.reveal-correct .face-front{transform:rotateY(-180deg)}
+.choice.reveal-correct .face-back {
+  transform:rotateY(0);
+  background:linear-gradient(180deg,#d9f8de,#7fd88a);
+  color:#1f6b2a;
+  animation:pop .4s .2s both;
+}
+.choice.reveal-wrong .face-front{transform:rotateY(-180deg)}
+.choice.reveal-wrong .face-back{
+  transform:rotateY(0);
+  background:linear-gradient(180deg,#ffdada,#ff9a9a);
+  color:#8b1a1a;
+  animation:shake .4s .2s both;
+}
+/* 保持点击手感 */
+.choice:not([disabled]):active .face-front{transform:translateY(2px)}
+/* 让占位高度撑起来（.face 是 absolute） */
+.choice::before{content:"";display:block;padding-top:96px}
+@media (max-width: 480px){
+  .choice::before{padding-top:80px}
+  .choice .face-back{font-size:80px}
+}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
