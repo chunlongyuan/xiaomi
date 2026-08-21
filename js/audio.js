@@ -66,7 +66,8 @@ function getAudioFor(text){
   return manifest[key] || null;
 }
 
-function playFile(fname){
+// rate: 播放倍速；trimEnd: 提前多少秒结束（跳过 TTS 末尾静音，让连播更紧凑）
+function playFile(fname, { rate = 1, trimEnd = 0 } = {}){
   return new Promise(resolve => {
     let a = clipCache.get(fname);
     if(!a){
@@ -76,10 +77,27 @@ function playFile(fname){
     } else {
       try{ a.pause(); a.currentTime = 0; }catch{}
     }
-    a.onended = () => resolve();
-    a.onerror = () => resolve();
+    let done = false;
+    const finish = () => {
+      if(done) return; done = true;
+      a.ontimeupdate = null; a.onended = null; a.onerror = null;
+      resolve();
+    };
+    a.playbackRate = rate;
+    a.onended = finish;
+    a.onerror = finish;
+    if(trimEnd > 0){
+      // 不等尾部静音播完，剩 trimEnd 秒就切下一段
+      a.ontimeupdate = () => {
+        const d = a.duration;
+        if(d && isFinite(d) && a.currentTime >= d - trimEnd){
+          try{ a.pause(); }catch{}
+          finish();
+        }
+      };
+    }
     // iOS 要求在用户手势内触发，我们的 unlock 已处理
-    Promise.resolve(a.play()).catch(() => resolve());
+    Promise.resolve(a.play()).catch(finish);
   });
 }
 
@@ -124,7 +142,7 @@ if('speechSynthesis' in window){
   loadVoices();
 }
 
-function synth(text, lang){
+function synth(text, lang, rateMul = 1){
   return new Promise(resolve => {
     if(!('speechSynthesis' in window)){ resolve(); return; }
     try{
@@ -133,7 +151,7 @@ function synth(text, lang){
       u.lang = lang || 'zh-CN';
       const v = pickVoice(u.lang); if(v) u.voice = v;
       // 英语稍慢一些让小朋友听清
-      u.rate = /^en/i.test(u.lang) ? 0.92 : 1.05;
+      u.rate = Math.min(2, (/^en/i.test(u.lang) ? 0.92 : 1.05) * rateMul);
       u.pitch = 1.0; u.volume = 1;
       u.onend = () => resolve();
       u.onerror = () => resolve();
@@ -162,6 +180,11 @@ async function speak(text, opts = {}){
 }
 
 // 按 part 顺播（数学题："5", "加", "3", "等于几"）
+// 每段 MP3 首尾都有 TTS 静音，直接连播会一顿一顿。
+// 所以提速 1.3 倍 + 提前 0.22 秒切段，听起来才连贯自然。
+const PARTS_RATE = 1.3;
+const PARTS_TRIM = 0.22;
+
 async function speakParts(parts, opts = {}){
   if(!store.soundOn) return;
   cancelAllSpeech();
@@ -172,8 +195,8 @@ async function speakParts(parts, opts = {}){
     if(id !== currentSpeakId) return;
     const key = String(p).trim();
     const f = getAudioFor(key);
-    if(f){ await playFile(f); }
-    else { await synth(key, opts.lang); }
+    if(f){ await playFile(f, { rate: PARTS_RATE, trimEnd: PARTS_TRIM }); }
+    else { await synth(key, opts.lang, PARTS_RATE); }
   }
 }
 

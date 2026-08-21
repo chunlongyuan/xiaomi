@@ -2,7 +2,7 @@
 import { store } from '../storage.js';
 
 // 跨页面保留的连点状态（每次 go() 都会重建 topbar，所以状态要放模块级）
-const tapState = { count: 0, last: 0 };
+const tapState = { count: 0, last: 0, timer: null };
 
 export function el(tag, cls, html){
   const n = document.createElement(tag);
@@ -30,23 +30,37 @@ export function topbar(ctx, opts={}){
     left.appendChild(back);
   }
   if(p){
-    const chip = el('button','profile-chip', `<span class="av">${p.avatar}</span><span class="nm">${escapeHtml(p.name)}</span>`);
-    chip.title = '切换小朋友（连点三下进游戏厅）';
-    // 单击立刻去档案页；若在 800ms 内累计点到 3 下，直接跳游戏厅
-    chip.addEventListener('click', ()=>{
+    const chip = el('div','profile-chip');
+    // 头像：单击 → 档案页
+    const av = el('button','av', p.avatar);
+    av.title = '切换小朋友';
+    av.addEventListener('click', ()=>{ audio.tap(); go('profiles'); });
+    // 名字：快速三击 → 游戏厅（500ms 内点满 3 下）
+    const nm = el('button','nm', escapeHtml(p.name));
+    nm.title = '快速点三下名字 → 游戏厅';
+    nm.addEventListener('click', ()=>{
       audio.tap();
       const now = Date.now();
-      if(now - (tapState.last || 0) > 800) tapState.count = 0;
+      if(now - (tapState.last || 0) > 500) tapState.count = 0;   // 快速三击窗口
       tapState.last = now;
       tapState.count += 1;
       if(tapState.count >= 3){
         tapState.count = 0;
+        clearTimeout(tapState.timer);
         audio.fanfare();
+        nm.classList.add('nm-pop');
         go('arcade');
-      } else {
-        go('profiles');    // 单击不再等待，立即响应
+        return;
       }
+      // 没点够三下就当作普通点击 → 档案页
+      clearTimeout(tapState.timer);
+      tapState.timer = setTimeout(()=>{
+        if(tapState.count > 0 && tapState.count < 3) go('profiles');
+        tapState.count = 0;
+      }, 520);
     });
+    chip.appendChild(av);
+    chip.appendChild(nm);
     left.appendChild(chip);
   }
   bar.appendChild(left);

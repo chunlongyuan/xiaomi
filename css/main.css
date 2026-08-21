@@ -58,12 +58,20 @@ body::after{top:35%; right:-80px; animation-duration:32s; animation-direction:re
   min-width:0;max-width:180px;
 }
 .profile-chip .av{
-  width:34px;height:34px;border-radius:50%;
+  width:34px;height:34px;border-radius:50%;border:none;padding:0;
   display:flex;align-items:center;justify-content:center;
   background:linear-gradient(180deg,#ffe28a,#ffbf47);font-size:22px;flex:none;
-  box-shadow:inset 0 -2px 0 rgba(0,0,0,.08);
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.08);cursor:pointer;
 }
-.profile-chip .nm{font-size:15px;color:#5a3d00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+.profile-chip .av:active{transform:scale(.94)}
+.profile-chip .nm{
+  font-size:15px;color:#5a3d00;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:110px;
+  background:transparent;border:none;padding:2px 2px;font-weight:800;
+  cursor:pointer;font-family:inherit;
+}
+.profile-chip .nm:active{transform:scale(.95)}
+.profile-chip .nm.nm-pop{animation:pop .35s}
 
 .stars-pill{
   display:inline-flex;align-items:center;gap:4px;
